@@ -18,6 +18,7 @@ import kotlin.random.Random
 
 /**
  * Bridge between the kotlinx.html dsl and kotlinjs. Attaches events to the DOM once the document is rendered.
+ * This will probably be extracted to a library.
  *
  * TODO possibly doesn't handle dynamic UIs.
  */
