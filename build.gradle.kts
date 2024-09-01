@@ -52,6 +52,7 @@ kotlin {
         }
     }
 }
+
 val buildStyle: TaskProvider<NpxTask> = tasks.register<NpxTask>("buildStyle") {
     println("Running tailwind")
     command.set("tailwindcss")
@@ -65,7 +66,6 @@ tasks.named("jsProcessResources") {
     dependsOn(buildStyle)
 }
 
-
 tasks.register("watch") {
     dependsOn("buildStyle")
 
@@ -77,7 +77,7 @@ tasks.register("watch") {
         val executor = Executors.newSingleThreadScheduledExecutor()
         var devServerProcess: Process? = null
 
-        val shutdownHook = Thread {
+        fun shutdown() {
             println("Shutting down watch task...")
             executor.shutdownNow()
             devServerProcess?.destroyForcibly()
@@ -89,10 +89,14 @@ tasks.register("watch") {
             "pkill -f 'node'".runCommand()
         }
 
+        val shutdownHook = Thread {
+            shutdown()
+        }
+
         Runtime.getRuntime().addShutdownHook(shutdownHook)
 
         try {
-            val watcherFuture = executor.scheduleWithFixedDelay({
+            executor.scheduleWithFixedDelay({
                 try {
                     val outputCssModifiedTime = if (outputCssFile.exists()) Files.getLastModifiedTime(outputCssFile.toPath()).toMillis() else 0L
                     val templateCssChanged = Files.getLastModifiedTime(templateCssFile.toPath()).toMillis() > outputCssModifiedTime
@@ -123,7 +127,7 @@ tasks.register("watch") {
             devServerProcess.waitFor()
         } finally {
             // Ensure cleanup happens even if an exception is thrown
-            shutdownHook.run()
+            shutdown()
             Runtime.getRuntime().removeShutdownHook(shutdownHook)
         }
     }
