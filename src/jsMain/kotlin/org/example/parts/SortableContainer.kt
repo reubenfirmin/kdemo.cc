@@ -16,13 +16,15 @@ fun FlowContent.sortableContainer() {
     div("text-black w-64 flex flex-col space-y-4 p-4 bg-gray-100 min-h-[200px] border-solid border-4 border-sky-500 mt-4 ml-4") {
         id = "sortable-container"
 
-        div("bg-white p-4 rounded shadow cursor-move border-solid border-2 border-sky-500") {
+        val itemClasses = "bg-white p-4 rounded drop-shadow-lg cursor-move border-solid border-2 border-sky-500"
+
+        div(itemClasses) {
             +"Draggable Item 1"
         }
-        div("bg-white p-4 rounded shadow cursor-move border-solid border-2 border-sky-500") {
+        div(itemClasses) {
             +"Draggable Item 2"
         }
-        div("bg-white p-4 rounded shadow cursor-move border-solid border-2 border-sky-500") {
+        div(itemClasses) {
             +"Draggable Item 3"
         }
 

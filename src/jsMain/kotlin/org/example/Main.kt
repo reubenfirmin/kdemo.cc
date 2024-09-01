@@ -6,38 +6,43 @@ import kotlinx.html.dom.*
 import org.example.component.badge
 import org.example.framework.dom.onClick
 import org.example.parts.sortableContainer
-import org.w3c.dom.HTMLElement
+import web.html.HTMLElement
 
 fun main() {
     document.body!!.append.main {
         div {
-            h1("text-xl text-red-500") {
-                +"Welcome to "
-                span("text-blue-500 underline") {
-                    +"a KotlinJS Template!"
+            h1("text-xl text-red-500 mx-8 pt-16") {
+                +"This is "
+                span("text-white bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-4") {
+                    +"a KotlinJS Template Project!"
                 }
             }
         }
 
-        div("w-24 mt-4 ml-4") {
+        div("px-8 pt-8 flex flex-row") {
             // this is an example of a component being used
-            badge {
-                +"This is my badge!"
+            badge("w-24 m-4 p-2") {
+                +"This is a component!"
+            }
+
+            badge("w-24 m-4 p-2") {
+                +"So is this!"
             }
         }
 
-        div("text-green-500 pt-4 ml-16") {
-            p("text-sm") {
-                +"A dark pink section"
-            }
-            div {
+        div("text-green-500 m-8") {
+            p("transition-all duration-500 ease-in-out cursor-pointer font-bold") {
                 id = "toggleUnderline"
-                classes = setOf("cursor-pointer", "font-bold")
-                +"Click me to toggle underline"
+                +"Click me to toggle classes"
 
-                onClick { _ ->
-                    val element = document.getElementById("toggleUnderline") as HTMLElement
+                onClick { event ->
+                    val element = event.target as HTMLElement
                     element.classList.toggle("underline")
+                    element.classList.toggle("text-green-500")
+                    element.classList.toggle("text-orange-300")
+                    element.classList.toggle("blur-sm")
+                    element.classList.toggle("text-6xl")
+                    element.classList.toggle("skew-y-6")
                 }
             }
         }
