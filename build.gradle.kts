@@ -14,6 +14,8 @@ repositories {
     mavenCentral()
 }
 
+val kotlinWrappers = "1.0.0-pre.800"
+
 kotlin {
     js(IR) {
         browser {
@@ -39,6 +41,10 @@ kotlin {
     sourceSets {
         val jsMain by getting {
             dependencies {
+                implementation(project.dependencies.platform("org.jetbrains.kotlin-wrappers:kotlin-wrappers-bom:$kotlinWrappers"))
+                implementation("org.jetbrains.kotlin-wrappers:kotlin-js")
+                implementation("org.jetbrains.kotlin-wrappers:kotlin-browser")
+
                 implementation("org.jetbrains.kotlinx:kotlinx-html-js:0.11.0")
                 implementation(npm("tailwindcss", "3.4.4"))
                 implementation(npm("sortablejs", "1.15.1"))
@@ -46,9 +52,8 @@ kotlin {
         }
     }
 }
-
 val buildStyle: TaskProvider<NpxTask> = tasks.register<NpxTask>("buildStyle") {
-    println("Rerunning tailwind")
+    println("Running tailwind")
     command.set("tailwindcss")
     args.set(listOf("-i", "src/jsMain/resources/template.css", "-o", "src/jsMain/resources/style.css"))
     inputs.files(fileTree("src/jsMain/kotlin"))
@@ -60,40 +65,74 @@ tasks.named("jsProcessResources") {
     dependsOn(buildStyle)
 }
 
+
 tasks.register("watch") {
     dependsOn("buildStyle")
-    dependsOn("jsBrowserRun")
 
     doLast {
+        val kotlinSourceDir = project.file("src/jsMain/kotlin")
         val templateCssFile = project.file("src/jsMain/resources/template.css")
         val outputCssFile = project.file("src/jsMain/resources/style.css")
 
         val executor = Executors.newSingleThreadScheduledExecutor()
+        var devServerProcess: Process? = null
 
-        executor.scheduleWithFixedDelay({
-            try {
-                val outputCssModifiedTime = if (outputCssFile.exists()) Files.getLastModifiedTime(outputCssFile.toPath()).toMillis() else 0L
-                val templateCssChanged = Files.getLastModifiedTime(templateCssFile.toPath()).toMillis() > outputCssModifiedTime
-
-                if (templateCssChanged) {
-                    println("CSS template changed! Rebuilding styles...")
-                    outputCssFile.delete()
-                    project.exec {
-                        commandLine("./gradlew", "buildStyle")
-                        isIgnoreExitValue = true
-                    }
-                }
-            } catch (e: Exception) {
-                println("Error in CSS watch task: ${e.message}")
-            }
-        }, 0, 1, TimeUnit.SECONDS)
-
-        Runtime.getRuntime().addShutdownHook(Thread {
-            executor.shutdown()
-        })
-
-        while (true) {
-            Thread.sleep(1000)
+        val shutdownHook = Thread {
+            println("Shutting down watch task...")
+            executor.shutdownNow()
+            devServerProcess?.destroyForcibly()
+            // Wait for the dev server to terminate
+            devServerProcess?.waitFor(5, TimeUnit.SECONDS)
+            // Kill any remaining Gradle daemons
+            "pkill -f 'GradleDaemon'".runCommand()
+            // Kill any remaining Node.js processes
+            "pkill -f 'node'".runCommand()
         }
+
+        Runtime.getRuntime().addShutdownHook(shutdownHook)
+
+        try {
+            val watcherFuture = executor.scheduleWithFixedDelay({
+                try {
+                    val outputCssModifiedTime = if (outputCssFile.exists()) Files.getLastModifiedTime(outputCssFile.toPath()).toMillis() else 0L
+                    val templateCssChanged = Files.getLastModifiedTime(templateCssFile.toPath()).toMillis() > outputCssModifiedTime
+                    val kotlinSourceChanged = kotlinSourceDir.walk().filter { it.isFile }.any {
+                        Files.getLastModifiedTime(it.toPath()).toMillis() > outputCssModifiedTime
+                    }
+
+                    if (templateCssChanged || kotlinSourceChanged) {
+                        println("Changes detected! Rebuilding styles...")
+                        outputCssFile.delete()
+                        project.exec {
+                            commandLine("./gradlew", "buildStyle")
+                            isIgnoreExitValue = true
+                        }
+                    }
+                } catch (e: Exception) {
+                    println("Error in watch task: ${e.message}")
+                }
+            }, 0, 1, TimeUnit.SECONDS)
+
+            // Start the Kotlin webpack dev server in a separate process
+            devServerProcess = ProcessBuilder("./gradlew", "jsBrowserRun", "--continuous")
+                .redirectOutput(ProcessBuilder.Redirect.INHERIT)
+                .redirectError(ProcessBuilder.Redirect.INHERIT)
+                .start()
+
+            // Wait for the dev server process to finish
+            devServerProcess.waitFor()
+        } finally {
+            // Ensure cleanup happens even if an exception is thrown
+            shutdownHook.run()
+            Runtime.getRuntime().removeShutdownHook(shutdownHook)
+        }
+    }
+}
+
+fun String.runCommand() {
+    try {
+        Runtime.getRuntime().exec(this)
+    } catch (e: Exception) {
+        println("Error running command '$this': ${e.message}")
     }
 }

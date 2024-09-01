@@ -3,9 +3,8 @@ package org.example
 import kotlinx.browser.*
 import kotlinx.html.*
 import kotlinx.html.dom.*
-import kotlinx.html.js.onClickFunction
-import kotlinx.html.org.w3c.dom.events.Event
 import org.example.component.badge
+import org.example.framework.dom.onClick
 import org.example.parts.sortableContainer
 import org.w3c.dom.HTMLElement
 
@@ -45,9 +44,4 @@ fun main() {
 
         sortableContainer()
     }
-}
-
-// These make the DSL nicer than the default that comes with kotlinx.html
-fun CommonAttributeGroupFacade.onClick(handler: (Event) -> Unit) {
-    this.onClickFunction = handler
 }

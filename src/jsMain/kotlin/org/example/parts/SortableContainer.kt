@@ -1,44 +1,52 @@
 package org.example.parts
 
-import kotlinx.browser.document
-import kotlinx.browser.window
+import js.objects.jso
 import kotlinx.html.FlowContent
-import kotlinx.html.classes
 import kotlinx.html.div
 import kotlinx.html.id
-import org.example.libs.DragEvent
-import org.example.libs.Sortable
-import org.example.libs.SortableOptions
-import org.w3c.dom.HTMLElement
+import org.example.framework.dom.onMount
+import org.example.framework.libs.Sortable
+import org.example.framework.libs.SortableEvent
+import web.dom.document
+import web.html.HTMLElement
 
 // example of how to break the ui up into chunks. this is not a reusable component, it's just a fragment of a ui
 fun FlowContent.sortableContainer() {
 
-    div {
+    div("text-black w-64 flex flex-col space-y-4 p-4 bg-gray-100 min-h-[200px] border-solid border-4 border-sky-500 mt-4 ml-4") {
         id = "sortable-container"
-        classes = setOf("flex", "flex-col", "space-y-4", "p-4", "bg-gray-100", "min-h-[300px]")
 
-        div("bg-white p-4 rounded shadow cursor-move") {
+        div("bg-white p-4 rounded shadow cursor-move border-solid border-2 border-sky-500") {
             +"Draggable Item 1"
         }
-        div("bg-white p-4 rounded shadow cursor-move") {
+        div("bg-white p-4 rounded shadow cursor-move border-solid border-2 border-sky-500") {
             +"Draggable Item 2"
         }
-        div("bg-white p-4 rounded shadow cursor-move") {
+        div("bg-white p-4 rounded shadow cursor-move border-solid border-2 border-sky-500") {
             +"Draggable Item 3"
         }
 
-        window.requestAnimationFrame {
-            console.log("Hello world!")
+        onMount {
             val container = document.getElementById("sortable-container") as HTMLElement
-            Sortable.create(container, object : SortableOptions {
-                override var group = "shared"
-                override var animation = 150
-                override var forceFallback = true
-                override var dragClass = "bg-blue-100"
-                override var ghostClass = "bg-blue-200 opacity-80"
-                override var easing = "cubic-bezier(1, 0, 0, 1)"
-                override var onEnd = { event: DragEvent ->
+            Sortable.create(container, jso {
+                group = "shared"
+                animation = 150
+                easing = "cubic-bezier(1, 0, 0, 1)"
+                onChoose = { event: SortableEvent ->
+                    console.log("Element chosen")
+                }
+                onUnchoose = { event: SortableEvent ->
+                    console.log("Element unchosen")
+                }
+                onStart = { event: SortableEvent ->
+                    console.log("Drag started")
+                    event.item.classList.remove("bg-white")
+                    event.item.classList.add("bg-blue-100", "text-red-500", "rotate-[5deg]")
+                }
+                onEnd = { event: SortableEvent ->
+                    console.log("Drag ended")
+                    event.item.classList.remove("bg-blue-100", "text-red-500", "rotate-[5deg]")
+                    event.item.classList.add("bg-white")
                     console.log("Moved element from index ${event.oldIndex} to ${event.newIndex}")
                 }
             })
