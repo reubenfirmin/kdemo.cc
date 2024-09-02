@@ -4,6 +4,7 @@ import org.example.framework.Router
 import org.example.pages.blog.BlogIndex
 import org.example.pages.booksearch.BookSearch
 import org.example.pages.home.Index
+import org.example.pages.kanban.Kanban
 import org.example.pages.oscilloscope.Oscilloscope
 
 fun main() {
@@ -12,6 +13,7 @@ fun main() {
     val blogIndex = BlogIndex()
     val bookSearch = BookSearch()
     val oscilloscope = Oscilloscope()
+    val kanban = Kanban()
 
     Router.route("/") {
         with (index) {
@@ -29,6 +31,9 @@ fun main() {
         with(oscilloscope) {
             oscilloscopeDemo()
         }
+    }.route("/kanban") {
+        with(kanban) {
+            kanbanBoard()
+        }
     }.start()
-
 }

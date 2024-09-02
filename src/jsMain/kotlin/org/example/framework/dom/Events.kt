@@ -5,6 +5,7 @@ import kotlinx.html.id
 import web.events.Event
 import web.events.EventType
 import web.events.addEventListener
+import web.uievents.KeyboardEvent
 import web.uievents.MouseEvent
 import kotlin.random.Random
 
@@ -34,12 +35,14 @@ private inline fun <reified E : Event> CommonAttributeGroupFacade.attachEvent(
 }
 
 // Standard event listeners
-// TODO these all require that id is defined on the attribute first; the logic above that tries to generate an id isn't working
+// XXX these all require that id is defined on the attribute first; the logic above that tries to generate an id isn't working
 fun CommonAttributeGroupFacade.onClick(handler: (MouseEvent) -> Unit) = attachEvent<MouseEvent>(EventType("click"), handler)
 fun CommonAttributeGroupFacade.onMouseEnter(handler: (MouseEvent) -> Unit) = attachEvent<MouseEvent>(EventType("mouseenter"), handler)
 fun CommonAttributeGroupFacade.onMouseLeave(handler: (MouseEvent) -> Unit) = attachEvent<MouseEvent>(EventType("mouseleave"), handler)
 fun CommonAttributeGroupFacade.onSubmit(handler: (Event) -> Unit) = attachEvent<Event>(EventType("submit"), handler)
 fun CommonAttributeGroupFacade.onChange(handler: (Event) -> Unit) = attachEvent<Event>(EventType("change"), handler)
+fun CommonAttributeGroupFacade.onKeyUp(handler: (KeyboardEvent) -> Unit) = attachEvent<KeyboardEvent>(EventType("keyup"), handler)
+fun CommonAttributeGroupFacade.onKeyDown(handler: (KeyboardEvent) -> Unit) = attachEvent<KeyboardEvent>(EventType("keydown"), handler)
 
 /**
  * Executed when element becomes visible
