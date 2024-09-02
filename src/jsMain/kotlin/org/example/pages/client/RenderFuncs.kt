@@ -1,31 +1,43 @@
 package org.example.pages.client
 
-import kotlinx.browser.document
 import kotlinx.html.*
-import kotlinx.html.dom.create
-import kotlinx.serialization.json.*
-import org.example.pages.client.component.bookCard
+import kotlinx.html.dom.append
+import org.example.framework.dom.onClick
+import org.example.framework.dom.onMouseEnter
+import org.example.framework.dom.onMouseLeave
 import org.example.pages.client.component.errorMessage
-import org.w3c.dom.Element
+import web.html.HTMLElement
+import web.uievents.MouseEvent
 
-fun displayBooks(container: Element, result: JsonElement) {
-    val docs = result.jsonObject["docs"]?.jsonArray ?: return
-
+fun displayBooks(container: HTMLElement, result: BookSearchResponse) {
     container.innerHTML = ""
-    container.appendChild(document.create.div("space-y-4") {
-        docs.forEach { book ->
-            val title = book.jsonObject["title"]?.jsonPrimitive?.content ?: "Unknown Title"
-            val author = book.jsonObject["author_name"]?.jsonArray?.getOrNull(0)?.jsonPrimitive?.content ?: "Unknown Author"
-            val year = book.jsonObject["first_publish_year"]?.jsonPrimitive?.content ?: "Unknown Year"
-
-            bookCard(title = title, author = author, year = year)
+    if (result.docs.isEmpty()) {
+        container.unsafeCast<org.w3c.dom.HTMLElement>().append.p {
+            +"No books found."
         }
-    })
+    } else {
+        container.unsafeCast<org.w3c.dom.HTMLElement>().append.ul {
+            result.docs.forEachIndexed() { idx, book ->
+                li("hover:underline hover:cursor-pointer") {
+                    id = "book-$idx"
+                    +"${book.title} by ${book.author_name?.joinToString(", ") ?: "Unknown"} (${book.first_publish_year ?: "Year unknown"})"
+                    val toggleOrange = fun (e: MouseEvent) {
+                        val el = e.target as HTMLElement
+                        el.classList.toggle("text-orange-500")
+                    }
+
+                    onClick(toggleOrange)
+                    onMouseEnter(toggleOrange)
+                    onMouseLeave(toggleOrange)
+                }
+            }
+        }
+    }
 }
 
-fun displayError(container: Element, message: String) {
+fun displayError(container: HTMLElement, message: String) {
     container.innerHTML = ""
-    container.appendChild(document.create.div {
+    container.unsafeCast<org.w3c.dom.HTMLElement>().append.div {
         errorMessage(message = message)
-    })
+    }
 }

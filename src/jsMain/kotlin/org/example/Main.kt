@@ -2,33 +2,49 @@ package org.example
 
 import org.example.framework.Router
 import org.example.pages.blog.BlogIndex
-import org.example.pages.client.ClientIndex
+import org.example.pages.client.BookSearch
 import org.example.pages.home.Index
 import org.example.pages.oscilloscope.Oscilloscope
+import kotlin.js.Promise
+
 
 fun main() {
-
     val index = Index()
     val blogIndex = BlogIndex()
-    val clientIndex = ClientIndex()
+    val bookSearch = BookSearch()
     val oscilloscope = Oscilloscope()
 
     Router.route("/") {
-        with (index) {
-            home()
+            Promise { resolve, _ ->
+                with(index) {
+                    home()
+                }
+                resolve(Unit)
+            }
         }
-    }.route("/blog") {
-        with(blogIndex) {
-            blogIndex()
+        .route("/blog") {
+            Promise { resolve, _ ->
+                with(blogIndex) {
+                    blogIndex()
+                }
+                resolve(Unit)
+            }
         }
-    }.route("/client") {
-        with(clientIndex) {
-            clientIndex()
+        .route("/book-search") {
+            Promise { resolve, _ ->
+                with(bookSearch) {
+                    render()
+                }
+                resolve(Unit)
+            }
         }
-    }.route("/scope") {
-        with(oscilloscope) {
-            oscilloscopeDemo()
+        .route("/scope") {
+            Promise { resolve, _ ->
+                with(oscilloscope) {
+                    oscilloscopeDemo()
+                }
+                resolve(Unit)
+            }
         }
-    }.start()
-
+        .start()
 }

@@ -1,26 +1,18 @@
 package org.example.framework.dom
 
 import js.objects.jso
-import kotlinx.html.CommonAttributeGroupFacade
-import kotlinx.html.id
 import web.dom.Element
 import web.dom.document
 import web.dom.observers.IntersectionObserver
 import web.dom.observers.MutationObserver
 import web.dom.observers.MutationObserverInit
-import web.events.Event
+import web.dom.observers.MutationRecordType
 import web.events.EventHandler
-import web.events.EventType
-import web.events.addEventListener
-import web.uievents.MouseEvent
 import web.window.window
-import kotlin.random.Random
 
 /**
  * Bridge between the kotlinx.html dsl and kotlinjs. Attaches events to the DOM once the document is rendered.
  * This will probably be extracted to a library.
- *
- * TODO possibly doesn't handle dynamic UIs.
  */
 object DomBehavior {
     private val behaviors = mutableListOf<Pair<String, (Element) -> Unit>>()
@@ -48,7 +40,8 @@ object DomBehavior {
         }
     }
 
-    private fun applyAll() {
+    fun flush() {
+        console.log("Flushing DomBehavior")
         behaviors.forEach { (id, behavior) ->
             document.getElementById(id)?.let { element ->
                 behavior(element.unsafeCast<Element>())
@@ -56,6 +49,21 @@ object DomBehavior {
         }
         behaviors.clear()
 
+        displayCallbacks.forEach { (id, callback) ->
+            document.getElementById(id)?.let { element ->
+                observer.observe(element)
+            }
+        }
+
+        // Execute mount callbacks for elements already in the DOM
+        mountCallbacks.keys.toList().forEach { id ->
+            document.getElementById(id)?.let {
+                executeMountCallback(id)
+            }
+        }
+    }
+
+    private fun applyAll() {
         observer = IntersectionObserver({ entries, _ ->
             entries.forEach { entry ->
                 if (entry.isIntersecting) {
@@ -72,32 +80,43 @@ object DomBehavior {
         })
 
         mutationObserver = MutationObserver { mutations, _ ->
+            var shouldFlush = false
             mutations.forEach { mutation ->
-                mutation.addedNodes.forEach { node ->
-                    if (node is Element) {
-                        executeMountCallback(node.id)
+                when (mutation.type) {
+                    MutationRecordType.childList -> {
+                        mutation.addedNodes.forEach { node ->
+                            if (node is Element) {
+                                executeMountCallback(node.id)
+                                shouldFlush = true
+                            }
+                        }
+                        if (mutation.removedNodes.length > 0) {
+                            shouldFlush = true
+                        }
+                    }
+                    MutationRecordType.attributes -> {
+                        if (mutation.attributeName == "id") {
+                            shouldFlush = true
+                        }
+                    }
+                    else -> {
+                        console.log(mutation)
                     }
                 }
             }
-        }
-
-        displayCallbacks.forEach { (id, _) ->
-            document.getElementById(id)?.let { element ->
-                observer.observe(element)
+            if (shouldFlush) {
+                flush()
             }
         }
 
-        // Execute mount callbacks for elements already in the DOM
-        mountCallbacks.keys.toList().forEach { id ->
-            document.getElementById(id)?.let {
-                executeMountCallback(id)
-            }
-        }
-
-        mutationObserver.observe(document.body, jso<MutationObserverInit> {
+        mutationObserver.observe(document, jso<MutationObserverInit> {
             childList = true
             subtree = true
+            attributes = true
+            attributeFilter = arrayOf("id")
         })
+
+        flush()
     }
 
     init {
@@ -107,51 +126,3 @@ object DomBehavior {
     }
 }
 
-private fun generateRandomString(length: Int = 7): String {
-    val charPool : List<Char> = ('a'..'z') + ('0'..'9')
-    return (1..length)
-        .map { Random.nextInt(0, charPool.size) }
-        .map(charPool::get)
-        .joinToString("")
-}
-
-private fun CommonAttributeGroupFacade.ensureId(): String {
-    if (id.isBlank()) {
-        id = "element-${generateRandomString()}"
-    }
-    return id
-}
-
-private inline fun <reified E : Event> CommonAttributeGroupFacade.attachEvent(
-    type: EventType<E>,
-    noinline handler: (E) -> Unit
-) {
-    val id = ensureId()
-    DomBehavior.queue(id) { element ->
-        element.addEventListener(type, handler)
-    }
-}
-
-// Standard event listeners
-// TODO these all require that id is defined on the attribute first; the logic above that tries to generate an id isn't working
-fun CommonAttributeGroupFacade.onClick(handler: (MouseEvent) -> Unit) = attachEvent<MouseEvent>(EventType("click"), handler)
-fun CommonAttributeGroupFacade.onMouseEnter(handler: (MouseEvent) -> Unit) = attachEvent<MouseEvent>(EventType("mouseenter"), handler)
-fun CommonAttributeGroupFacade.onMouseLeave(handler: (MouseEvent) -> Unit) = attachEvent<MouseEvent>(EventType("mouseleave"), handler)
-fun CommonAttributeGroupFacade.onSubmit(handler: (Event) -> Unit) = attachEvent<Event>(EventType("submit"), handler)
-fun CommonAttributeGroupFacade.onChange(handler: (Event) -> Unit) = attachEvent<Event>(EventType("change"), handler)
-
-/**
- * Executed when element becomes visible
- */
-fun CommonAttributeGroupFacade.onDisplay(handler: () -> Unit) {
-    val id = ensureId()
-    DomBehavior.queueDisplay(id, handler)
-}
-
-/**
- * Executed when element is added to dom
- */
-fun CommonAttributeGroupFacade.onMount(handler: () -> Unit) {
-    val id = ensureId()
-    DomBehavior.queueMount(id, handler)
-}

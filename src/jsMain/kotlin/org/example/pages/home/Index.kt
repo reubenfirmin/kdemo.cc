@@ -11,7 +11,7 @@ import web.uievents.MouseEvent
 class Index {
 
     fun TagConsumer<*>.home() {
-        main {
+        main("ml-8") {
             div {
                 h1("text-xl text-red-500 mx-8 pt-16") {
                     +"This is "
@@ -78,8 +78,8 @@ class Index {
                         +"Blog"
                     }
                     a(classes = "underline text-blue-500") {
-                        href = "/client"
-                        +"Client"
+                        href = "/book-search"
+                        +"Book Search"
                     }
                     a(classes = "underline text-blue-500") {
                         href = "/scope"
