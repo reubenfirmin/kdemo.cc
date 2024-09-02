@@ -9,8 +9,9 @@ import web.dom.document
 object Router {
     private val routes = mutableMapOf<String, TagConsumer<*>.() -> Unit>()
 
-    fun route(path: String, handler: TagConsumer<*>.() -> Unit) {
+    fun route(path: String, handler: TagConsumer<*>.() -> Unit): Router {
         routes[path] = handler
+        return this
     }
 
     fun navigate(path: String) {

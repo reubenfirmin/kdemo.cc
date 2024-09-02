@@ -8,15 +8,12 @@ fun main() {
 
     Router.route("/") {
         with (Index()) {
-            render()
+            home()
         }
-    }
-    Router.route("/blog") {
+    }.route("/blog") {
         with (BlogIndex()) {
             blogIndex()
         }
-    }
-
-    Router.start()
+    }.start()
 
 }

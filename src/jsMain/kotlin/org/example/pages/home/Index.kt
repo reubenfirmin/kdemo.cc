@@ -10,7 +10,7 @@ import web.uievents.MouseEvent
 
 class Index {
 
-    fun TagConsumer<*>.render() {
+    fun TagConsumer<*>.home() {
         main {
             div {
                 h1("text-xl text-red-500 mx-8 pt-16") {
