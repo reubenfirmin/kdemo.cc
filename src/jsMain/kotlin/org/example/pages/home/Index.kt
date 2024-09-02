@@ -75,6 +75,10 @@ class Index {
                 href = "/blog"
                 +"Blog"
             }
+            a {
+                href = "/client"
+                +"Client"
+            }
         }
     }
 }

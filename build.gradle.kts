@@ -49,7 +49,7 @@ kotlin {
                 implementation(project.dependencies.platform("org.jetbrains.kotlin-wrappers:kotlin-wrappers-bom:$kotlinWrappers"))
                 implementation("org.jetbrains.kotlin-wrappers:kotlin-js")
                 implementation("org.jetbrains.kotlin-wrappers:kotlin-browser")
-
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
                 implementation("org.jetbrains.kotlinx:kotlinx-html-js:0.11.0")
                 implementation(npm("tailwindcss", "3.4.4"))
                 implementation(npm("sortablejs", "1.15.1"))
