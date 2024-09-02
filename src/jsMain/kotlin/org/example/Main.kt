@@ -6,12 +6,15 @@ import org.example.pages.home.Index
 
 fun main() {
 
+    val index = Index()
+    val blogIndex = BlogIndex()
+
     Router.route("/") {
-        with (Index()) {
+        with (index) {
             home()
         }
     }.route("/blog") {
-        with (BlogIndex()) {
+        with (blogIndex) {
             blogIndex()
         }
     }.start()
