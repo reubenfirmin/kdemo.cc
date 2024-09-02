@@ -1,4 +1,4 @@
-package org.example.parts
+package org.example.pages.home
 
 import js.objects.jso
 import kotlinx.html.FlowContent
@@ -29,26 +29,29 @@ fun FlowContent.sortableContainer() {
         }
 
         onMount {
-            val container = document.getElementById("sortable-container") as HTMLElement
+            val container = document.getElementById(this@div.id) as HTMLElement
             Sortable.create(container, jso {
                 group = "shared"
                 animation = 150
                 easing = "cubic-bezier(1, 0, 0, 1)"
-                onChoose = { event: SortableEvent ->
+                onChoose = { _ ->
                     console.log("Element chosen")
                 }
-                onUnchoose = { event: SortableEvent ->
+                onUnchoose = { _ ->
                     console.log("Element unchosen")
                 }
                 onStart = { event: SortableEvent ->
+                    event.item.classList.apply {
+                        remove("bg-white")
+                        add("bg-blue-100", "text-red-500", "rotate-[5deg]")
+                    }
                     console.log("Drag started")
-                    event.item.classList.remove("bg-white")
-                    event.item.classList.add("bg-blue-100", "text-red-500", "rotate-[5deg]")
                 }
                 onEnd = { event: SortableEvent ->
-                    console.log("Drag ended")
-                    event.item.classList.remove("bg-blue-100", "text-red-500", "rotate-[5deg]")
-                    event.item.classList.add("bg-white")
+                    event.item.classList.apply {
+                        remove("bg-blue-100", "text-red-500", "rotate-[5deg]")
+                        add("bg-white")
+                    }
                     console.log("Moved element from index ${event.oldIndex} to ${event.newIndex}")
                 }
             })

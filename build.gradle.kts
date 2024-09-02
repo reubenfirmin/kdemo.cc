@@ -23,15 +23,20 @@ kotlin {
                 cssSupport {
                     enabled.set(true)
                 }
+//                commonWebpackConfig {
+//                    configDirectory = projectDir.resolve("webpack.config.d")
+//                }
             }
             runTask {
+                mainOutputFileName = "main.bundle.js"
                 devServer = devServer.copy(
                     open = true,
-                    port = 3000
+                    port = 3000,
                 )
                 sourceMaps = true
             }
             webpackTask {
+                mainOutputFileName = "main.bundle.js"
                 sourceMaps = true
             }
         }

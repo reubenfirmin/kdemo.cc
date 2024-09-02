@@ -7,8 +7,7 @@ import kotlinx.html.visit
 
 // example of a reusable component
 class Badge(classes: String, consumer: TagConsumer<*>): DIV(
-    mapOf("class" to "$classes flex justify-center items-center px-3 text-sm font-medium text-purple-800 bg-purple-100 " +
-            "rounded-lg dark:bg-purple-200"), consumer) {
+    mapOf("class" to "$classes flex justify-center items-center px-3 text-sm font-medium text-purple-800 bg-purple-100 rounded-lg"), consumer) {
 
     fun render(block: Badge.() -> Unit) {
         block()
