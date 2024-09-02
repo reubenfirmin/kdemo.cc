@@ -1,4 +1,4 @@
-package org.example.pages.client
+package org.example.pages.booksearch
 
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json

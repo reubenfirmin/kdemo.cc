@@ -1,4 +1,4 @@
-package org.example.pages.client.component
+package org.example.pages.booksearch.component
 
 import kotlinx.html.*
 

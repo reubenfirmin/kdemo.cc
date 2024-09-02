@@ -9,10 +9,9 @@ import web.dom.document
 import kotlin.js.Promise
 
 object Router {
+    private val routes = mutableMapOf<String, TagConsumer<*>.() -> Any>()
 
-    private val routes = mutableMapOf<String, TagConsumer<*>.() -> Promise<Unit>>()
-
-    fun route(path: String, handler: TagConsumer<*>.() -> Promise<Unit>): Router {
+    fun route(path: String, handler: TagConsumer<*>.() -> Any): Router {
         routes[path] = handler
         return this
     }
@@ -30,9 +29,10 @@ object Router {
             val consumer = append
 
             routes[path]?.let { handler ->
-                handler(consumer).then {
-                    console.log("Rendered page for $path")
-                    DomBehavior.flush()
+                val result = handler(consumer)
+                when (result) {
+                    is Promise<*> -> result.then { DomBehavior.flush() }
+                    else -> DomBehavior.flush()
                 }
             } ?: notFound()
         }

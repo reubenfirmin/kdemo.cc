@@ -92,6 +92,7 @@ class Oscilloscope {
 
         val rangeSlider = document.getElementById("rangeSlider") as HTMLInputElement
         val rangeValueDisplay = document.getElementById("rangeValue") as HTMLElement
+        // TODO add event handler for this
         rangeSlider.addEventListener("input", {
             xRange = rangeSlider.value.toDouble()
             rangeValueDisplay.textContent = xRange.toString()

@@ -28,6 +28,7 @@ fun FlowContent.sortableContainer() {
             +"Draggable Item 3"
         }
 
+        // we can't do anything with the dom until it's actually been rendered
         onMount {
             val container = document.getElementById(this@div.id) as HTMLElement
             Sortable.create(container, jso {

@@ -1,11 +1,11 @@
-package org.example.pages.client
+package org.example.pages.booksearch
 
 import kotlinx.html.*
 import kotlinx.html.dom.append
 import org.example.framework.dom.onClick
 import org.example.framework.dom.onMouseEnter
 import org.example.framework.dom.onMouseLeave
-import org.example.pages.client.component.errorMessage
+import org.example.pages.booksearch.component.errorMessage
 import web.html.HTMLElement
 import web.uievents.MouseEvent
 

@@ -1,4 +1,4 @@
-package org.example.pages.client
+package org.example.pages.booksearch
 
 import kotlinx.html.*
 import kotlinx.html.js.onSubmitFunction
