@@ -71,13 +71,17 @@ class Index {
 
             sortableContainer()
 
-            a {
-                href = "/blog"
-                +"Blog"
-            }
-            a {
-                href = "/client"
-                +"Client"
+            div("inline-block") {
+                div("m-4 p-4 border-dashed border-2 border-black inline-block flex flex-row gap-4") {
+                    a(classes = "underline text-blue-500") {
+                        href = "/blog"
+                        +"Blog"
+                    }
+                    a(classes = "underline text-blue-500") {
+                        href = "/client"
+                        +"Client"
+                    }
+                }
             }
         }
     }
