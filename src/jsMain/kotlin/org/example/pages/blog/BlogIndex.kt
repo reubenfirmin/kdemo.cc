@@ -32,7 +32,7 @@ class BlogIndex {
                 }
 
                 onSubmit { event ->
-                    event.preventDefault() // Prevent the default form submission
+                    event.preventDefault()
 
                     val containerEl = document.getElementById("container")!!
                     val inputEl = document.getElementById("blog-form-input") as HTMLInputElement
