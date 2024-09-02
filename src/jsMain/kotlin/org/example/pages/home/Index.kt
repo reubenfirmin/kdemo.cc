@@ -81,6 +81,10 @@ class Index {
                         href = "/client"
                         +"Client"
                     }
+                    a(classes = "underline text-blue-500") {
+                        href = "/scope"
+                        +"Scope"
+                    }
                 }
             }
         }
