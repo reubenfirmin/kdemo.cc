@@ -105,7 +105,7 @@ class Kanban {
 
     private fun FlowContent.actionBar() {
         div("bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg p-4 flex justify-between items-center") {
-            a(href = "#", classes = "text-white hover:text-blue-200 transition-colors duration-200") {
+            a(href = "/", classes = "text-white hover:text-blue-200 transition-colors duration-200") {
                 +"← Back"
             }
             div("flex-grow mx-4") {

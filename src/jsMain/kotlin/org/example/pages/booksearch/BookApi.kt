@@ -9,7 +9,8 @@ import kotlin.js.Promise
 data class Book(
     val title: String,
     val author_name: List<String>? = null,
-    val first_publish_year: Int? = null
+    val first_publish_year: Int? = null,
+    val isbn: List<String>? = null
 )
 
 @Serializable
@@ -30,7 +31,7 @@ class BookApi {
         val encodedQuery = js("encodeURIComponent")(query) as String
 
         return httpClient.get(
-            endpoint = "/search.json?q=$encodedQuery&limit=$limit",
+            endpoint = "/search.json?q=$encodedQuery&limit=$limit&fields=title,author_name,first_publish_year,isbn",
             parse = { responseText ->
                 json.decodeFromString<BookSearchResponse>(responseText)
             }
