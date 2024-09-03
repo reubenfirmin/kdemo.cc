@@ -4,12 +4,16 @@ import kotlinx.html.*
 import kotlinx.html.attributes.Attribute
 import kotlinx.html.attributes.StringAttribute
 
-inline fun FlowContent.svg(classes: String, crossinline block: SvgTag.() -> Unit = {}) =
+inline fun FlowContent.svg(classes: String? = null, crossinline block: SvgTag.() -> Unit = {}) =
     SvgTag(classes, consumer).visit(block)
 
-open class SvgTag(classes: String, consumer: TagConsumer<*>) : HTMLTag(
+/**
+ * Implementation note: all classes in this hierarchy must have the namespace defined so that they are added with document.createElementNS
+ */
+open class SvgTag(classes: String?, consumer: TagConsumer<*>) : HTMLTag(
     "svg", consumer, attributesMapOf("class", classes), "http://www.w3.org/2000/svg", false, false), HtmlBlockInlineTag {
-    var id: String
+
+        var id: String
         get() = stringAttr[this, "id"]
         set(newValue) {
             stringAttr[this, "id"] = newValue
@@ -73,7 +77,7 @@ open class SvgTag(classes: String, consumer: TagConsumer<*>) : HTMLTag(
 }
 
 
-class SvgPath(consumer: TagConsumer<*>) : HTMLTag("path", consumer, emptyMap(), inlineTag = false, emptyTag = false) {
+class SvgPath(consumer: TagConsumer<*>) : HTMLTag("path", consumer, emptyMap(), "http://www.w3.org/2000/svg", inlineTag = false, emptyTag = false) {
 
     var id: String
         get() = stringAttr[this, "id"]
@@ -133,7 +137,7 @@ class SvgPath(consumer: TagConsumer<*>) : HTMLTag("path", consumer, emptyMap(), 
             stringAttr[this, "stroke-width"] = newValue
         }
 }
-class SvgUse(consumer: TagConsumer<*>) : HTMLTag("use", consumer, emptyMap(), inlineTag = false, emptyTag = false) {
+class SvgUse(consumer: TagConsumer<*>) : HTMLTag("use", consumer, emptyMap(), "http://www.w3.org/2000/svg", inlineTag = false, emptyTag = false) {
 
     var x: String
         get() = stringAttr[this, "x"]
@@ -164,7 +168,7 @@ class SvgUse(consumer: TagConsumer<*>) : HTMLTag("use", consumer, emptyMap(), in
         }
 }
 
-class SvgRect(consumer: TagConsumer<*>) : HTMLTag("rect", consumer, emptyMap(), inlineTag = false, emptyTag = false) {
+class SvgRect(consumer: TagConsumer<*>) : HTMLTag("rect", consumer, emptyMap(), "http://www.w3.org/2000/svg", inlineTag = false, emptyTag = false) {
     var x: String
         get() = stringAttr[this, "x"]
         set(newValue) {
@@ -208,7 +212,7 @@ class SvgRect(consumer: TagConsumer<*>) : HTMLTag("rect", consumer, emptyMap(), 
 }
 
 
-class SvgMask(consumer: TagConsumer<*>) : HTMLTag("mask", consumer, emptyMap(), inlineTag = false, emptyTag = false) {
+class SvgMask(consumer: TagConsumer<*>) : HTMLTag("mask", consumer, emptyMap(), "http://www.w3.org/2000/svg", inlineTag = false, emptyTag = false) {
     var id: String
         get() = stringAttr[this, "id"]
         set(newValue) {
@@ -258,7 +262,7 @@ class SvgMask(consumer: TagConsumer<*>) : HTMLTag("mask", consumer, emptyMap(), 
 }
 
 
-class SvgG(consumer: TagConsumer<*>) : HTMLTag("g", consumer, emptyMap(), inlineTag = false, emptyTag = false) {
+class SvgG(consumer: TagConsumer<*>) : HTMLTag("g", consumer, emptyMap(), "http://www.w3.org/2000/svg", inlineTag = false, emptyTag = false) {
 
     fun use(block: SvgUse.() -> Unit = {}) =
         SvgUse(consumer).visit(block)
@@ -297,7 +301,7 @@ class SvgG(consumer: TagConsumer<*>) : HTMLTag("g", consumer, emptyMap(), inline
 
 }
 
-class SvgDefs(consumer: TagConsumer<*>) : HTMLTag("defs", consumer, emptyMap(), inlineTag = false, emptyTag = false) {
+class SvgDefs(consumer: TagConsumer<*>) : HTMLTag("defs", consumer, emptyMap(), "http://www.w3.org/2000/svg", inlineTag = false, emptyTag = false) {
     fun filter(block: SvgFilter.() -> Unit = {}) =
         SvgFilter(consumer).visit(block)
 
@@ -360,7 +364,7 @@ class SvgDefs(consumer: TagConsumer<*>) : HTMLTag("defs", consumer, emptyMap(), 
             SvgFilterFeBlend(consumer).visit(block)
 
         class SvgFilterFeFlood(consumer: TagConsumer<*>) :
-            HTMLTag("feflood", consumer, emptyMap(), inlineTag = false, emptyTag = false) {
+            HTMLTag("feflood", consumer, emptyMap(), "http://www.w3.org/2000/svg", inlineTag = false, emptyTag = false) {
             var result: String
                 get() = stringAttr[this, "result"]
                 set(newValue) {
@@ -369,7 +373,7 @@ class SvgDefs(consumer: TagConsumer<*>) : HTMLTag("defs", consumer, emptyMap(), 
         }
 
         class SvgFilterFeColorMatrix(consumer: TagConsumer<*>) :
-            HTMLTag("fecolormatrix", consumer, emptyMap(), inlineTag = false, emptyTag = false) {
+            HTMLTag("fecolormatrix", consumer, emptyMap(), "http://www.w3.org/2000/svg", inlineTag = false, emptyTag = false) {
 
             var `in`: String
                 get() = stringAttr[this, "in"]
@@ -397,7 +401,7 @@ class SvgDefs(consumer: TagConsumer<*>) : HTMLTag("defs", consumer, emptyMap(), 
         }
 
         class SvgFilterFeOffset(consumer: TagConsumer<*>) :
-            HTMLTag("feoffset", consumer, emptyMap(), inlineTag = false, emptyTag = false) {
+            HTMLTag("feoffset", consumer, emptyMap(), "http://www.w3.org/2000/svg", inlineTag = false, emptyTag = false) {
             var dy: String
                 get() = stringAttr[this, "dy"]
                 set(newValue) {
@@ -407,7 +411,7 @@ class SvgDefs(consumer: TagConsumer<*>) : HTMLTag("defs", consumer, emptyMap(), 
         }
 
         class SvgFilterFeBlend(consumer: TagConsumer<*>) :
-            HTMLTag("feblend", consumer, emptyMap(), inlineTag = false, emptyTag = false) {
+            HTMLTag("feblend", consumer, emptyMap(), "http://www.w3.org/2000/svg", inlineTag = false, emptyTag = false) {
             var mode: String
                 get() = stringAttr[this, "mode"]
                 set(newValue) {
@@ -436,7 +440,7 @@ class SvgDefs(consumer: TagConsumer<*>) : HTMLTag("defs", consumer, emptyMap(), 
 
 
     class SvgLinearGradient(consumer: TagConsumer<*>) :
-        HTMLTag("lineargradient", consumer, emptyMap(), inlineTag = false, emptyTag = false) {
+        HTMLTag("lineargradient", consumer, emptyMap(), "http://www.w3.org/2000/svg", inlineTag = false, emptyTag = false) {
         var id: String
             get() = stringAttr[this, "id"]
             set(newValue) {
@@ -477,7 +481,7 @@ class SvgDefs(consumer: TagConsumer<*>) : HTMLTag("defs", consumer, emptyMap(), 
             SvgLinearGradientStop(consumer).visit(block)
 
         class SvgLinearGradientStop(consumer: TagConsumer<*>) :
-            HTMLTag("stop", consumer, emptyMap(), inlineTag = false, emptyTag = false) {
+            HTMLTag("stop", consumer, emptyMap(), "http://www.w3.org/2000/svg", inlineTag = false, emptyTag = false) {
             var offset: String
                 get() = stringAttr[this, "offset"]
                 set(newValue) {
@@ -488,8 +492,7 @@ class SvgDefs(consumer: TagConsumer<*>) : HTMLTag("defs", consumer, emptyMap(), 
     }
 }
 
-// Add this class after your existing SVG element classes
-class SvgText(consumer: TagConsumer<*>) : HTMLTag("text", consumer, emptyMap(), inlineTag = false, emptyTag = false) {
+class SvgText(consumer: TagConsumer<*>) : HTMLTag("text", consumer, emptyMap(), "http://www.w3.org/2000/svg", inlineTag = false, emptyTag = false) {
     var x: String
         get() = stringAttr[this, "x"]
         set(newValue) {
@@ -551,7 +554,7 @@ class SvgText(consumer: TagConsumer<*>) : HTMLTag("text", consumer, emptyMap(), 
         SvgTspan(consumer).visit(block)
 }
 
-class SvgTspan(consumer: TagConsumer<*>) : HTMLTag("tspan", consumer, emptyMap(), inlineTag = false, emptyTag = false) {
+class SvgTspan(consumer: TagConsumer<*>) : HTMLTag("tspan", consumer, emptyMap(), "http://www.w3.org/2000/svg", inlineTag = false, emptyTag = false) {
     var x: String
         get() = stringAttr[this, "x"]
         set(newValue) {
@@ -594,7 +597,7 @@ class SvgTspan(consumer: TagConsumer<*>) : HTMLTag("tspan", consumer, emptyMap()
         }
 }
 
-class SvgCircle(consumer: TagConsumer<*>) : HTMLTag("circle", consumer, emptyMap(), inlineTag = false, emptyTag = false) {
+class SvgCircle(consumer: TagConsumer<*>) : HTMLTag("circle", consumer, emptyMap(), "http://www.w3.org/2000/svg", inlineTag = false, emptyTag = false) {
     var cx: String
         get() = stringAttr[this, "cx"]
         set(newValue) {

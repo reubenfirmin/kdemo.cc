@@ -7,6 +7,7 @@ import kotlinx.html.dom.append
 import org.example.framework.dom.onClick
 import org.example.framework.dom.onKeyUp
 import org.example.framework.dom.onMount
+import org.example.framework.interop.appendTo
 import org.example.framework.libs.Sortable
 import org.example.framework.libs.SortableEvent
 import web.dom.document
@@ -60,12 +61,13 @@ class Kanban {
                         easing = "cubic-bezier(0.25, 1, 0.5, 1)"
                         onStart = { event: SortableEvent ->
                             event.item.classList.apply {
-                                add("scale-105", "shadow-xl")
+                                add("scale-105", "shadow-xl", "bg-blue-100", "text-red-500", "rotate-[2deg]")
                             }
                         }
                         onEnd = { event: SortableEvent ->
                             event.item.classList.apply {
-                                remove("scale-105", "shadow-xl")
+                                remove("scale-105", "shadow-xl", "bg-blue-100", "text-red-500", "rotate-[2deg]")
+                                add("bg-white")
                             }
                             // Update the data model when a card is moved
                             val fromColumnIndex = event.from.id.split("-").last().toInt()
@@ -153,13 +155,11 @@ class Kanban {
 
     private fun refreshBoard() {
         // Re-render the entire board
-        val boardContainer = document.querySelector("main")!!
+        val boardContainer = document.querySelector("main") as HTMLElement
         boardContainer.innerHTML = ""
-        boardContainer.unsafeCast<org.w3c.dom.HTMLElement>().append {
-            div("flex space-x-6") {
-                columns.forEachIndexed { index, column ->
-                    kanbanColumn(column, index)
-                }
+        boardContainer.appendTo().div("flex space-x-6") {
+            columns.forEachIndexed { index, column ->
+                kanbanColumn(column, index)
             }
         }
     }

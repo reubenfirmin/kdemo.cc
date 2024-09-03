@@ -1,10 +1,11 @@
 package org.example.framework
 
 import kotlinx.browser.window
-import kotlinx.dom.clear
-import kotlinx.html.*
 import kotlinx.html.dom.append
+import kotlinx.html.*
 import org.example.framework.dom.DomBehavior
+import org.example.framework.interop.appendTo
+import org.example.framework.interop.clear
 import web.dom.document
 import kotlin.js.Promise
 
@@ -24,9 +25,9 @@ object Router {
     private fun handleRoute() {
         val path = window.location.pathname
 
-        kotlinx.browser.document.body!!.apply {
+        document.body.apply {
             clear()
-            val consumer = append
+            val consumer = appendTo()
 
             routes[path]?.let { handler ->
                 when (val result = handler(consumer)) {

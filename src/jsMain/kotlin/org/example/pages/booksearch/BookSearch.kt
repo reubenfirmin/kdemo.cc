@@ -1,14 +1,11 @@
 package org.example.pages.booksearch
 
-import org.example.framework.tags.svg
 import kotlinx.html.*
-import kotlinx.html.dom.append
 import kotlinx.html.js.onSubmitFunction
 import org.example.framework.dom.onClick
-import org.example.framework.dom.onError
+import org.example.framework.interop.appendTo
 import web.dom.document
 import web.html.HTMLElement
-import web.html.HTMLImageElement
 import web.html.HTMLInputElement
 import kotlin.random.Random
 import kotlin.math.round
@@ -19,9 +16,13 @@ class BookSearch {
     fun TagConsumer<*>.render() {
         div("min-h-screen bg-gray-100") {
             header("bg-white shadow") {
-                div("max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8") {
+                div("max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex flex-row gap-16 items-end") {
                     h1("text-3xl font-bold text-gray-900") {
                         +"BookShop"
+                    }
+                    a {
+                        href = "/"
+                        +"Back"
                     }
                 }
             }
@@ -74,14 +75,14 @@ class BookSearch {
     }
 
     private fun handleSearch() {
-        val containerEl = document.getElementById("results-container") as HTMLElement
         val inputEl = document.getElementById("search-input") as HTMLInputElement
-
         val query = inputEl.value
 
         if (query.isNotBlank()) {
-            // TODO use dsl
-            containerEl.innerHTML = "<div class='col-span-full text-center'>Searching...</div>"
+            val containerEl = document.getElementById("results-container") as HTMLElement
+            containerEl.appendTo().div("col-span-full text-center") {
+                +"Searching..."
+            }
             bookApi.searchBooks(query)
                 .then { result ->
                     displayBooks(containerEl, result)
@@ -98,13 +99,13 @@ class BookSearch {
     private fun displayBooks(container: HTMLElement, result: BookSearchResponse) {
         container.innerHTML = ""
         if (result.docs.isEmpty()) {
-            container.unsafeCast<org.w3c.dom.HTMLElement>().append.p("col-span-full text-center text-gray-700") {
+            container.appendTo().p("col-span-full text-center text-gray-700") {
                 +"No books found."
             }
         } else {
             result.docs.forEachIndexed { idx, book ->
-                container.unsafeCast<org.w3c.dom.HTMLElement>().append.div("bg-white overflow-hidden shadow rounded-lg flex flex-col") {
-                    div("relative flex-grow") {
+                container.appendTo().div("bg-white overflow-hidden shadow rounded-lg flex flex-col") {
+                    div("relative flex-grow h-64") {
                         bookImage(book, idx)
                         div("absolute top-0 right-0 bg-indigo-500 text-white px-2 py-1 m-2 rounded") {
                             +"$${round(Random.nextDouble(9.99, 29.99) * 100) / 100}"
@@ -144,140 +145,5 @@ class BookSearch {
                 }
             }
         }
-    }
-
-    private fun FlowContent.bookImage(book: Book, idx: Int) {
-        val isbn = book.isbn?.firstOrNull()
-        if (isbn != null) {
-            img("w-full h-48 object-cover") {
-                id = "img-$idx"
-                src = "https://covers.openlibrary.org/b/isbn/$isbn-M.jpg"
-                alt = book.title
-
-                onError {
-                    val element = document.getElementById(this@img.id) as HTMLImageElement
-                    element.style.display = "none"
-                    val svgCompanion = document.getElementById("svg-$idx") as HTMLElement
-                    svgCompanion.style.display = "block"
-                }
-            }
-            renderSvgCover(book, idx, "display: none")
-        } else {
-            renderSvgCover(book, idx)
-        }
-    }
-
-    private fun FlowContent.renderSvgCover(book: Book, idx: Int, style: String = "") {
-        val width = 192
-        val height = 192
-        val title = book.title.take(50)
-        val author = book.author_name?.firstOrNull()?.take(40) ?: "Unknown"
-        val bgColor = generateContrastingColor()
-        val textColor = if (isColorLight(bgColor)) "#000000" else "#FFFFFF"
-
-        svg("w-full h-48") {
-            id = "svg-cover-$idx"
-            attributes["style"] = style
-            attributes["width"] = "$width"
-            attributes["height"] = "$height"
-            viewBox = "0 0 $width $height"
-            attributes["xmlns"] = "http://www.w3.org/2000/svg"
-
-            // Background
-            rect {
-                fill = bgColor
-                this.width = "100%"
-                this.height = "100%"
-            }
-
-            // Border
-            rect {
-                fill = "none"
-                stroke = textColor
-                strokeWidth = "4"
-                x = "4"
-                y = "4"
-                this.width = "${width - 8}"
-                this.height = "${height - 8}"
-            }
-
-            // Title
-            text {
-                x = "50%"
-                y = "35%"
-                textAnchor = "middle"
-                fontFamily = "Arial, sans-serif"
-                fontSize = "18"
-                fill = textColor
-                attributes["font-weight"] = "bold"
-
-                val words = title.split(" ")
-                var line = ""
-                var yOffset = 0
-                words.forEach { word ->
-                    if ((line + word).length > 15) {
-                        tspan {
-                            x = "50%"
-                            dy = "${if (yOffset == 0) "0" else "1.2em"}"
-                            +line.trim()
-                        }
-                        line = "$word "
-                        yOffset++
-                    } else {
-                        line += "$word "
-                    }
-                }
-                if (line.isNotEmpty()) {
-                    tspan {
-                        x = "50%"
-                        dy = "${if (yOffset == 0) "0" else "1.2em"}"
-                        +line.trim()
-                    }
-                }
-            }
-
-            // "by" text
-            text {
-                x = "50%"
-                y = "70%"
-                textAnchor = "middle"
-                fontFamily = "Arial, sans-serif"
-                fontSize = "14"
-                fill = textColor
-                +"by"
-            }
-
-            // Author
-            text {
-                x = "50%"
-                y = "80%"
-                textAnchor = "middle"
-                fontFamily = "Arial, sans-serif"
-                fontSize = "16"
-                fill = textColor
-                +author.escapeXml()
-            }
-        }
-    }
-
-    private fun generateContrastingColor(): String {
-        val hue = Random.nextInt(360)
-        val saturation = Random.nextInt(70, 100)
-        val lightness = Random.nextInt(25, 75)
-        return "hsl($hue, $saturation%, $lightness%)"
-    }
-
-    private fun isColorLight(color: String): Boolean {
-        val hsl = color.substringAfter("hsl(").substringBefore(")").split(",")
-        val lightness = hsl[2].trim().removeSuffix("%").toInt()
-        return lightness > 50
-    }
-
-    private fun String.escapeXml(): String {
-        return replace("&", "&amp;")
-            .replace("<", "&lt;")
-            .replace(">", "&gt;")
-            .replace("\"", "&quot;")
-            .replace("'", "&apos;")
     }
 }
