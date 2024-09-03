@@ -1,10 +1,13 @@
 package org.example.pages.home
 
+import kotlinx.browser.document
 import kotlinx.html.*
+import kotlinx.html.dom.append
 import org.example.component.badge
 import org.example.framework.dom.onClick
 import org.example.framework.dom.onMouseEnter
 import org.example.framework.dom.onMouseLeave
+import org.example.framework.tags.svg
 import web.html.HTMLElement
 import web.uievents.MouseEvent
 
@@ -39,6 +42,49 @@ class Index {
                     }
                 }
             }
+
+            div {
+                id = "svgs"
+                svg("bg-gray-200") {
+                    width = "80"
+                    height = "48"
+
+                    viewBox = "0 0 80 48"
+
+                    path {
+                        stroke = "#FF0000"
+                        strokeLinecap = "round"
+                        strokeLinejoin = "round"
+                        strokeWidth = "6"
+                        d = "M72 40 40 8 8 40"
+                    }
+                }
+
+
+            }
+
+            val svg = document.createElementNS("http://www.w3.org/2000/svg", "svg")
+            svg.setAttribute("width", "80")
+            svg.setAttribute("height", "48")
+            svg.setAttribute("viewBox", "0 0 80 48")
+
+            val path = document.createElementNS("http://www.w3.org/2000/svg", "path")
+            path.setAttribute("d", "M72 40 40 8 8 40")
+            path.setAttribute("stroke", "#0000FF")
+            path.setAttribute("stroke-width", "6")
+            path.setAttribute("stroke-linecap", "round")
+            path.setAttribute("stroke-linejoin", "round")
+            svg.appendChild(path)
+            document.body!!.appendChild(svg)
+
+            val svgContainer = document.createElement("div")
+            svgContainer.innerHTML = """
+                <svg class="w-20 h-12 bg-gray-200" xmlns="http://www.w3.org/2000/svg" width="80" height="48" viewBox="0 0 80 48">
+                    <path stroke="#00FF00" stroke-linecap="round" stroke-linejoin="round" stroke-width="6" d="M72 40 40 8 8 40" />
+                </svg>
+            """.trimIndent()
+            document.body!!.appendChild(svgContainer)
+
 
             div("px-8 pt-8 flex flex-row") {
                 // this is an example of a component being used

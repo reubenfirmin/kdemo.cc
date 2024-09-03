@@ -43,6 +43,8 @@ fun CommonAttributeGroupFacade.onSubmit(handler: (Event) -> Unit) = attachEvent<
 fun CommonAttributeGroupFacade.onChange(handler: (Event) -> Unit) = attachEvent<Event>(EventType("change"), handler)
 fun CommonAttributeGroupFacade.onKeyUp(handler: (KeyboardEvent) -> Unit) = attachEvent<KeyboardEvent>(EventType("keyup"), handler)
 fun CommonAttributeGroupFacade.onKeyDown(handler: (KeyboardEvent) -> Unit) = attachEvent<KeyboardEvent>(EventType("keydown"), handler)
+fun CommonAttributeGroupFacade.onLoad(handler: (Event) -> Unit) = attachEvent<Event>(EventType("load"), handler)
+fun CommonAttributeGroupFacade.onError(handler: (Event) -> Unit) = attachEvent<Event>(EventType("error"), handler)
 
 /**
  * Executed when element becomes visible

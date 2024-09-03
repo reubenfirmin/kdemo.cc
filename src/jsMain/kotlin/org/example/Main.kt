@@ -8,7 +8,6 @@ import org.example.pages.kanban.Kanban
 import org.example.pages.oscilloscope.Oscilloscope
 
 fun main() {
-
     val index = Index()
     val blogIndex = BlogIndex()
     val bookSearch = BookSearch()

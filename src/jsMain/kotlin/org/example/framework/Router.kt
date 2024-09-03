@@ -29,8 +29,7 @@ object Router {
             val consumer = append
 
             routes[path]?.let { handler ->
-                val result = handler(consumer)
-                when (result) {
+                when (val result = handler(consumer)) {
                     is Promise<*> -> result.then { DomBehavior.flush() }
                     else -> DomBehavior.flush()
                 }

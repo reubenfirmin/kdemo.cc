@@ -7,6 +7,8 @@ import org.example.framework.dom.onMouseEnter
 import org.example.framework.dom.onMouseLeave
 import org.example.pages.booksearch.component.errorMessage
 import web.html.HTMLElement
+import web.svg.SVG.circle
+import web.svg.SVG.path
 import web.uievents.MouseEvent
 
 fun displayBooks(container: HTMLElement, result: BookSearchResponse) {
@@ -29,6 +31,9 @@ fun displayBooks(container: HTMLElement, result: BookSearchResponse) {
                     onClick(toggleOrange)
                     onMouseEnter(toggleOrange)
                     onMouseLeave(toggleOrange)
+                }
+                svg {
+
                 }
             }
         }
