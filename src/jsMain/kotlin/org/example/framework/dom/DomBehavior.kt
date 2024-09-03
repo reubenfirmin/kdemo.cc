@@ -41,7 +41,6 @@ object DomBehavior {
     }
 
     fun flush() {
-        console.log("Flushing DomBehavior")
         behaviors.forEach { (id, behavior) ->
             document.getElementById(id)?.let { element ->
                 behavior(element.unsafeCast<Element>())

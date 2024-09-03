@@ -14,7 +14,7 @@ class Index {
         main("ml-8") {
             div {
                 h1("text-xl text-red-500 mx-8 pt-16") {
-                    +"This is "
+                    +"Styling "
                     span("text-white bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-4") {
                         // TODO this is required before attaching event handlers...
                         id = "hello"
@@ -35,7 +35,7 @@ class Index {
                         onMouseEnter(eventHandler)
                         onMouseLeave(eventHandler)
 
-                        +"a KotlinJS Template Project!"
+                        +"demos with KotlinJs & Tailwind"
                     }
                 }
             }
