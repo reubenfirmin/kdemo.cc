@@ -63,7 +63,6 @@ class TB303(audioContext: AudioContext) {
     fun setFilterCutoff(frequency: Int) {
         val safeFrequency = frequency.coerceIn(20, 20000)
         filter.frequency.value = safeFrequency.toFloat()
-        console.log(filter.frequency.value)
     }
 
     fun setDelayTime(delayPercent: Int) {
