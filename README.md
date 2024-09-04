@@ -21,7 +21,8 @@ Deploy the contents of `dist`.
 ## The Code
 
 [Kotlinx.html](https://github.com/Kotlin/kotlinx.html) is a library that deserves more attention. It gives you a typesafe DSL that generates HTML, and can be used on the backend or 
-(as in the case of this project) frontend. 
+(as in the case of this project) frontend. As an example of this, the SvgTag class which is included in this project is lifted as-is (and only slightly enhanced) from a backend HTMX 
+oriented project.
 
 To give you a taste:
 

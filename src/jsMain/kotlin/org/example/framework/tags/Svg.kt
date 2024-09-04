@@ -75,6 +75,11 @@ open class SvgTag(classes: String?, consumer: TagConsumer<*>) : HTMLTag(
     fun g(classes: String? = null, block: SvgG.() -> Unit = {}) =
         SvgG(classes, consumer).visit(block)
 
+    var preserveAspectRatio: String
+        get() = stringAttr[this, "preserveAspectRatio"]
+        set(newValue) {
+            stringAttr[this, "preserveAspectRatio"] = newValue
+        }
 }
 
 

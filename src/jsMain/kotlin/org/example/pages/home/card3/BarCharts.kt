@@ -14,22 +14,26 @@ class BarCharts {
     private val barCount = 20 // Number of frequency bars to display
     private var animationId: Int? = null
 
+
     fun FlowContent.renderBars() {
-        div {
-            val svgWidth = (barCount * 20).toString()
+        div("w-full") {
             svg {
                 id = "frequency-chart"
-                width = svgWidth
+                attributes["width"] = "100%"
                 height = "100"
-                viewBox = "0 0 $svgWidth 100"
+                viewBox = "0 0 100 100"
+                preserveAspectRatio = "none"
 
-                // Initial frequency bars
+                val barWidthPercent = 80.0 / barCount  // 80% total width for bars, 20% for gaps
+                val gapWidthPercent = 20.0 / (barCount + 1)  // Distribute remaining 20% evenly
+
                 repeat(barCount) { index ->
+                    val xPosition = gapWidthPercent * (index + 1) + barWidthPercent * index
                     rect {
-                        x = "${index * 20 + 2}"
+                        x = "${xPosition}%"
                         y = "100"
-                        this.width = "16"
-                        this.height = "0"
+                        width = "${barWidthPercent}%"
+                        height = "0%"
                         fill = "#4299e1"
                         attributes["data-bar-index"] = index.toString()
                     }
