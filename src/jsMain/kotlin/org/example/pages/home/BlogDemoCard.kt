@@ -13,7 +13,7 @@ fun FlowContent.blogDemoCard() {
             }
 
             p("mb-4") {
-                +"Super simple micro blogging interface, demonstrating tailwind styling/layout, and basic event handling."
+                +"Super simple micro blogging interface, demonstrating tailwind styling/layout, and basic event handling. Maybe I'll call it Y."
             }
         }
         div("p-6") {
