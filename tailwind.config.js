@@ -18,7 +18,10 @@ module.exports = {
                     "700": "#1d4ed8",
                     "800": "#1e40af",
                     "900": "#1e3a8a"
-                }
+                },
+                'neon-blue': '#00FFFF',
+                'neon-pink': '#FF00FF',
+                'neon-green': '#39FF14',
             },
             fontFamily: {
                 'sans': ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'system-ui', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'Noto Sans', 'sans-serif', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'],

@@ -18,6 +18,11 @@ fun FlowContent.buttonClickCard() {
             +"Button Demo"
         }
 
+        p("pb-16") {
+            +"""When you click on the button, you'll reveal an animated layer. The animation is constantly running in a bottom layer; in front of it is an svg. When you click the button,
+                we cut a hole in the svg matching the dimensions and position of this card, allowing you to see what's underneath.""".trimIndent()
+        }
+
         onMount {
             val buttonId = "click_me_$cardId"
 

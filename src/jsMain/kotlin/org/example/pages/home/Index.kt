@@ -51,7 +51,12 @@ class Index {
 
                         textStyleCard()
                         buttonClickCard()
+                        sourceCard()
+                        blogDemoCard()
                         chartCard()
+                        bookSearchCard()
+                        scopeDemoCard()
+                        kanbanDemoCard()
                     }
                 }
             }
