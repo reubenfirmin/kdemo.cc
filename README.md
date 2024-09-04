@@ -1,6 +1,6 @@
 # Kotlin.js + Tailwind + Kotlinx.html demos
 
-This project demonstrates a way to combine kotlin.js and kotlinx.html. This gives you a JSX-like way to build frontend UIs, without needing anything heavyweight like React (that said, no performance testing has been done on this yet.) This also uses kotlin-browser, a library that provides an update to the older org.w3c.dom classes provided in kotlin.js.
+This is a set of frontend experiments using Kotlin.js, Tailwind and Kotlinx.html. Typesafe UIs with a convenient DSL, and a better IDE experience - what's not to love? (This also uses kotlin-browser, a new-ish library that provides an update to the older org.w3c.dom classes provided in kotlin.js.)
 
 Status: weekend code, not yet used in production.
 
