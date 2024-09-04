@@ -11,6 +11,8 @@ import kotlin.random.Random
 import kotlinx.browser.window
 import org.example.framework.dom.onInput
 import web.html.HTMLInputElement
+import kotlin.math.log10
+import kotlin.math.pow
 
 class ChartCard {
 
@@ -19,7 +21,7 @@ class ChartCard {
     private var rhythmIntervalId: Int? = null
     private var beatCount = 0
 
-    private var tb303Cutoff = 5000
+    private var tb303Cutoff = logToLinear(1000)
     private var tb303Delay = 70
 
     private val colors = listOf("#FF00FF", "#00FF00", "#00FFFF", "#FF9900", "#FF0066")
@@ -61,13 +63,14 @@ class ChartCard {
                     }
                     input(type = InputType.range, classes = "w-full") {
                         id = "cutoff"
-                        min = "20"
-                        max = "20000"
+                        min = "0"
+                        max = "1000"
                         value = tb303Cutoff.toString()
                         step = "5"
                         onInput { event ->
-                            val cutoff = (event.target as HTMLInputElement).value.toInt()
-                            tb303Cutoff = cutoff
+                            val linearValue = (event.target as HTMLInputElement).value.toInt()
+                            val logValue = linearToLog(linearValue).toInt()
+                            tb303Cutoff = logValue
                         }
                     }
                 }
@@ -113,69 +116,16 @@ class ChartCard {
 
             with (audioState!!) {
 
-                val interval = (60.0 / 130 * 1000 / 4).toInt()
+                val interval = (60.0 / 130 * 1000 / 4).toInt() // 130bpm 16th notes...I think
+
+                val song = HitTheClub(kickDrum, hiHat, tb303)
 
                 // TODO is there a better clock? surely
                 rhythmIntervalId = window.setInterval({
+                    // adjust these each tick just for state simplicity
                     tb303.setDelayTime(this@ChartCard.tb303Delay)
                     tb303.setFilterCutoff(this@ChartCard.tb303Cutoff)
-
-                    val time = currentTime()
-                    when (beatCount % 16) {
-                        0 -> {
-                            kickDrum.play(time)
-                        }
-                        1 -> {
-
-                        }
-                        2 -> {
-                            hiHat.play(time)
-                            tb303.play(time, 62, 2)
-                        }
-                        3 -> {
-
-                        }
-                        4 -> {
-                            kickDrum.play(time)
-                        }
-                        5 -> {
-
-                        }
-                        6 -> {
-                            hiHat.play(time)
-                        }
-                        7 -> {
-
-                        }
-                        8 -> {
-                            kickDrum.play(time)
-                            tb303.play(time, 62, 4)
-                        }
-                        9 -> {
-                            tb303.play(time, 62, 4)
-                        }
-                        10 -> {
-                            hiHat.play(time)
-                            tb303.play(time, 62, 4)
-                            tb303.play(time, 62, 2)
-                        }
-                        11 -> {
-                            tb303.play(time, 62, 4)
-                        }
-                        12 -> {
-                            kickDrum.play(time)
-                        }
-                        13 -> {
-
-                        }
-                        14 -> {
-                            hiHat.play(time)
-                        }
-                        15 -> {
-
-                        }
-                    }
-                    beatCount++
+                    song.grid(beatCount++, currentTime())
                 }, interval)
             }
         } catch (e: Exception) {
@@ -223,6 +173,18 @@ class ChartCard {
             bar.setAttribute("y", (100 - initialHeights[index]).toString())
             bar.setAttribute("fill", "#4299e1")
         }
+    }
+
+    private fun linearToLog(value: Int): Float {
+        val minFreq = 20f
+        val maxFreq = 20000f
+        return minFreq * 10.0.pow((value / 1000.0) * log10(maxFreq / minFreq)).toFloat()
+    }
+
+    private fun logToLinear(freq: Int): Int {
+        val minFreq = 20f
+        val maxFreq = 20000f
+        return ((log10(freq / minFreq) / log10(maxFreq / minFreq)) * 1000).toInt().coerceIn(0, 1000)
     }
 }
 

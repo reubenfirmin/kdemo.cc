@@ -12,7 +12,7 @@ class TB303(audioContext: AudioContext) {
 
     private val filter: BiquadFilterNode = audioContext.createBiquadFilter().apply {
         type = BiquadFilterType.lowpass
-        frequency.value = 5000f
+        frequency.value = 1000f
         Q.value = 8f
     }
 
@@ -55,13 +55,14 @@ class TB303(audioContext: AudioContext) {
         envelope.gain.exponentialRampToValueAtTime(0.00001f, time + 0.5) // Release
 
         filter.frequency.cancelScheduledValues(time)
-        filter.frequency.setValueAtTime(filter.frequency.value, time)
-        filter.frequency.linearRampToValueAtTime(5000f, time + 0.1)
-        filter.frequency.exponentialRampToValueAtTime(filter.frequency.value, time + 0.4)
+        filter.frequency.setValueAtTime(100f, time)
+        filter.frequency.linearRampToValueAtTime(5000f, time + 0.05) // Quick sweep up
+        filter.frequency.exponentialRampToValueAtTime(filter.frequency.value, time + 0.1) // Quick sweep down
     }
 
     fun setFilterCutoff(frequency: Int) {
-        filter.frequency.value = frequency.toFloat()
+        val safeFrequency = frequency.coerceIn(20, 20000)
+        filter.frequency.value = safeFrequency.toFloat()
         console.log(filter.frequency.value)
     }
 
