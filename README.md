@@ -1,6 +1,6 @@
 # Kotlin.js + Tailwind + Kotlinx.html demos
 
-This is a set of frontend experiments using Kotlin.js, Tailwind and Kotlinx.html. Typesafe UIs with a convenient DSL, and a better IDE experience - what's not to love? (This also uses kotlin-browser, a new-ish library that provides an update to the older org.w3c.dom classes provided in kotlin.js.)
+This is a set of frontend experiments using Kotlin.js, Tailwind and Kotlinx.html. Typesafe UIs with a convenient DSL, and a better IDE experience - what's not to love? (This also uses kotlin-browser, a new-i sh library that provides an update to the older org.w3c.dom classes provided in kotlin.js.)
 
 Status: weekend code, not yet used in production.
 
@@ -17,6 +17,10 @@ This will open a browser tab which will hot reload on changes to code. Tailwind 
 `./gradlew deploy`
 
 Deploy the contents of `dist`.
+
+## The Code
+
+
 
 ## Debug in IDE
 

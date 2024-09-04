@@ -64,10 +64,13 @@ fun FlowContent.buttonClickCard() {
             // Initial position update
             updateButtonPosition()
 
-            // Add resize event listener
-            window.addEventListener("resize", {
+            window.onresize = {
                 updateButtonPosition()
-            })
+            }
+
+            window.onscroll = {
+                updateButtonPosition()
+            }
         }
     }
 }

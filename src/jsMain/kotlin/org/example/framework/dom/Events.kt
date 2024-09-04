@@ -47,6 +47,7 @@ fun CommonAttributeGroupFacade.onKeyDown(handler: (KeyboardEvent) -> Unit) = att
 fun CommonAttributeGroupFacade.onLoad(handler: (Event) -> Unit) = attachEvent<Event>(EventType("load"), handler)
 fun CommonAttributeGroupFacade.onError(handler: (Event) -> Unit) = attachEvent<Event>(EventType("error"), handler)
 fun CommonAttributeGroupFacade.onInput(handler: (InputEvent) -> Unit) = attachEvent<InputEvent>(EventType("input"), handler)
+fun CommonAttributeGroupFacade.onScroll(handler: (InputEvent) -> Unit) = attachEvent<InputEvent>(EventType("scroll"), handler)
 
 
 /**

@@ -1,7 +1,6 @@
 package org.example.framework
 
 import kotlinx.browser.window
-import kotlinx.html.dom.append
 import kotlinx.html.*
 import org.example.framework.dom.DomBehavior
 import org.example.framework.interop.appendTo
@@ -41,7 +40,12 @@ object Router {
     }
 
     private fun notFound() {
-        document.getElementById("root")?.innerHTML = "<h1>404 - Page Not Found</h1>"
+        document.body.apply {
+            clear()
+            appendTo().h1 {
+                +"Sorry, couldn't find what you are looking for"
+            }
+        }
         DomBehavior.flush()
     }
 
