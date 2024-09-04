@@ -20,7 +20,22 @@ Deploy the contents of `dist`.
 
 ## The Code
 
+[Kotlinx.html](https://github.com/Kotlin/kotlinx.html) is a library that deserves more attention. It gives you a typesafe DSL that generates HTML, and can be used on the backend or 
+(as in the case of this project) frontend. 
 
+To give you a taste:
+
+```kotlin
+fun FlowContent.blogDemoCard() {
+    card("bg-blue-700 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden flex flex-col justify-between") {
+        div("h-2 bg-gradient-to-r from-purple-400 via-red-500 to-pink-500")
+
+        div("p-6") {
+            h2("text-xl font-semibold mb-4 text-gray-100") {
+                +"Blog Demo"
+            }
+        ...
+```
 
 ## Debug in IDE
 
@@ -58,4 +73,17 @@ Full screen charting using Canvas.
 
 Demonstrates integrating an npm library (in this case sortable.js).
 
+# Worth Checking Out
 
+## Event Handling 
+
+Events.kt (under org.example.framework.dom) provides common event handlers which can be plugged into the DSL. Because the elements don't exist at the time the DSL is being executed,
+calling any of these functions queues up an event handler to be added as soon as the DOM has settled. This seems to work pretty robustly, though I haven't tried this on a large scale app.
+
+## Routing
+
+Router.kt implements a very simple router. Any navigation is intercepted, and the body is swapped out with the new "page". Main.kt wires this up for this app.
+
+## Calling APIs
+
+The booksearch demo implements a simple HttpClient - just a wrapper around fetch with some convenience. BookApi demonstrates deserializing responses.
