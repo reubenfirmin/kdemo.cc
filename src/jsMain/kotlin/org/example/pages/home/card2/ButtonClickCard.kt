@@ -1,5 +1,6 @@
 package org.example.pages.home.card2
 
+import kotlinx.browser.window
 import kotlinx.html.*
 import org.example.framework.dom.onClick
 import org.example.framework.dom.onMount
@@ -10,7 +11,7 @@ import web.dom.document
 import web.html.HTMLElement
 
 fun FlowContent.buttonClickCard() {
-    card {
+    card("min-h-64 bg-gray-800 rounded-lg shadow-md p-6") {
         val cardId = "button_demo_card"
         id = cardId
         h2("text-xl font-semibold mb-4 text-gray-100") {
@@ -18,15 +19,22 @@ fun FlowContent.buttonClickCard() {
         }
 
         onMount {
-            val cardEl = document.getElementById(cardId)!!
-            val rect = cardEl.getBoundingClientRect()
-            val buttonTop = rect.bottom - 50
-            val buttonLeft = rect.x + 16
+            val buttonId = "click_me_$cardId"
+
+            fun updateButtonPosition() {
+                val cardEl = document.getElementById(cardId)!!
+                val rect = cardEl.getBoundingClientRect()
+                val buttonTop = rect.bottom - 50
+                val buttonLeft = rect.x + 16
+
+                document.getElementById(buttonId)?.let { button ->
+                    button.setAttribute("style", "top: ${buttonTop}px; left: ${buttonLeft}px;")
+                }
+            }
 
             document.body.appendTo().button(classes = "fixed bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded " +
                     "transition duration-300 ease-in-out z-50") {
-                id = "click_me_$cardId"
-                style = "top: ${buttonTop}px; left: ${buttonLeft}px;"
+                id = buttonId
 
                 +"Click me"
                 onClick { event ->
@@ -47,7 +55,14 @@ fun FlowContent.buttonClickCard() {
                     }
                 }
             }
+
+            // Initial position update
+            updateButtonPosition()
+
+            // Add resize event listener
+            window.addEventListener("resize", {
+                updateButtonPosition()
+            })
         }
     }
-
 }
