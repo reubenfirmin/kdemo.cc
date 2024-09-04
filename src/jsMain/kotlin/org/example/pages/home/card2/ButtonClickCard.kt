@@ -1,4 +1,4 @@
-package org.example.pages.home
+package org.example.pages.home.card2
 
 import kotlinx.html.*
 import org.example.framework.dom.onClick

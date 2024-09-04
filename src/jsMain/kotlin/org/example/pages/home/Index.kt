@@ -1,20 +1,11 @@
 package org.example.pages.home
 
 import kotlinx.html.*
-import org.example.component.badge
-import org.example.framework.dom.onClick
-import org.example.framework.dom.onMount
-import org.example.framework.dom.onMouseEnter
-import org.example.framework.dom.onMouseLeave
-import org.example.framework.interop.appendTo
-import org.example.framework.tags.svg
-import org.example.pages.home.components.card
-import web.dom.Element
-import web.dom.document
-import web.html.HTMLElement
-import web.svg.SVGElement
-
-import kotlin.random.Random
+import org.example.pages.home.card1.textStyleCard
+import org.example.pages.home.card2.animatedBackground
+import org.example.pages.home.card2.buttonClickCard
+import org.example.pages.home.card2.maskedBackgroundLayer
+import org.example.pages.home.card3.chartCard
 
 class Index {
 

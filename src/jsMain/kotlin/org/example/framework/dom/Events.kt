@@ -5,6 +5,7 @@ import kotlinx.html.id
 import web.events.Event
 import web.events.EventType
 import web.events.addEventListener
+import web.uievents.InputEvent
 import web.uievents.KeyboardEvent
 import web.uievents.MouseEvent
 import kotlin.random.Random
@@ -45,6 +46,8 @@ fun CommonAttributeGroupFacade.onKeyUp(handler: (KeyboardEvent) -> Unit) = attac
 fun CommonAttributeGroupFacade.onKeyDown(handler: (KeyboardEvent) -> Unit) = attachEvent<KeyboardEvent>(EventType("keydown"), handler)
 fun CommonAttributeGroupFacade.onLoad(handler: (Event) -> Unit) = attachEvent<Event>(EventType("load"), handler)
 fun CommonAttributeGroupFacade.onError(handler: (Event) -> Unit) = attachEvent<Event>(EventType("error"), handler)
+fun CommonAttributeGroupFacade.onInput(handler: (InputEvent) -> Unit) = attachEvent<InputEvent>(EventType("input"), handler)
+
 
 /**
  * Executed when element becomes visible
