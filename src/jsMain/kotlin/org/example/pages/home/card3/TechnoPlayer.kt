@@ -1,6 +1,7 @@
 package org.example.pages.home.card3
 
 import kotlinx.browser.window
+import web.audio.AnalyserNode
 import kotlin.math.log10
 import kotlin.math.pow
 
@@ -13,48 +14,53 @@ class TechnoPlayer {
 
     private var tb303Cutoff = logToLinear(1000)
     private var tb303Delay = 70
+    private var activeGrid = 0
+    private var started = false
 
-    fun startTechno() {
-        try {
-            if (audioState == null) {
-                audioState = AudioState()
-            } else {
-                audioState!!.resume()
-            }
+    fun startTechno(): AnalyserNode {
 
-            with (audioState!!) {
+        if (started) {
+            return audioState!!.analyser
+        }
 
-                val interval = (60.0 / 130 * 1000 / 4).toInt() // 130bpm 16th notes...I think
+        if (audioState == null) {
+            audioState = AudioState()
+        } else {
+            audioState!!.resume()
+        }
 
-                val song = HitTheClub(kickDrum, hiHat, tb303)
+        with (audioState!!) {
 
-                // TODO is there a better clock? surely
-                rhythmIntervalId = kotlinx.browser.window.setInterval({
-                    // adjust these each tick just for state simplicity
-                    tb303.setDelayTime(this@TechnoPlayer.tb303Delay)
-                    tb303.setFilterCutoff(this@TechnoPlayer.tb303Cutoff)
-                    song.grid(beatCount++, currentTime())
-                }, interval)
-            }
-        } catch (e: Exception) {
-            console.error("Error starting audio: ${e.message}")
+            val interval = (60.0 / 130 * 1000 / 4).toInt() // 130bpm 16th notes...I think
+
+            val song = HitTheClub(kickDrum, hiHat, tb303)
+
+            activeGrid++
+
+            started = true
+            // TODO is there a better clock? surely
+            rhythmIntervalId = window.setInterval({
+                // adjust these each tick just for state simplicity
+                tb303.setDelayTime(this@TechnoPlayer.tb303Delay)
+                tb303.setFilterCutoff(this@TechnoPlayer.tb303Cutoff)
+                song.grid(beatCount++, currentTime())
+            }, interval)
+            return analyser
         }
     }
 
     fun stopTechno() {
-        try {
-            if (audioState != null) {
-                audioState!!.disconnect()
-            }
-            rhythmIntervalId?.let { window.clearInterval(it) }
-            beatCount = 0
-
-            // We're not closing the AudioContext here to allow for quick restart
-            // If you want to fully close it, you'd need to handle it asynchronously
-        } catch (e: Exception) {
-            console.error("Error stopping audio: ${e.message}")
+        if (audioState != null) {
+            audioState!!.disconnect()
         }
+        started = false
+        rhythmIntervalId?.let { window.clearInterval(it) }
+        beatCount = 0
+
+        // We're not closing the AudioContext here to allow for quick restart
     }
+
+    fun isPlaying() = started
 
     /**
      * Set cutoff - 0-1000 (mapped to 20-20000hz)

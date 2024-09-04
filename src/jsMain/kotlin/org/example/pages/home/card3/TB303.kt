@@ -3,7 +3,7 @@ package org.example.pages.home.card3
 import web.audio.*
 import kotlin.math.pow
 
-class TB303(audioContext: AudioContext) {
+class TB303(audioContext: AudioContext, analyser: AnalyserNode) {
 
     private val oscillator: OscillatorNode = audioContext.createOscillator().apply {
         type = OscillatorType.sawtooth
@@ -41,6 +41,7 @@ class TB303(audioContext: AudioContext) {
         delayFeedback.connect(delay)
         delayFeedback.connect(output)
         output.connect(audioContext.destination)
+        output.connect(analyser)
     }
 
     fun play(time: Double, note: Int, octave: Int) {

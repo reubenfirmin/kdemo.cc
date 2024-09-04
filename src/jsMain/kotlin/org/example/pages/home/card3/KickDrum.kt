@@ -1,9 +1,10 @@
 package org.example.pages.home.card3
 
+import web.audio.AnalyserNode
 import web.audio.AudioContext
 import web.audio.OscillatorType
 
-class KickDrum(private val audioContext: AudioContext) {
+class KickDrum(audioContext: AudioContext, analyser: AnalyserNode) {
 
     private val kickOscillator= audioContext.createOscillator().apply {
         type = OscillatorType.sine
@@ -17,6 +18,7 @@ class KickDrum(private val audioContext: AudioContext) {
     init {
         kickOscillator.connect(kickGain)
         kickGain.connect(audioContext.destination)
+        kickGain.connect(analyser)
     }
 
     fun play(time: Double) {

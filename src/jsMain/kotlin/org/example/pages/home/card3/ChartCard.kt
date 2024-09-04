@@ -28,9 +28,11 @@ class ChartCard {
                     +"Play"
                     onClick { event ->
                         event.preventDefault()
-                        document.getElementById("overlay")?.classList?.add("hidden")
-                        technoPlayer.startTechno()
-                        barCharts.startBarAnimation()
+                        document.getElementById(this@div.id)!!.remove()
+                        if (!technoPlayer.isPlaying()) {
+                            val analyser = technoPlayer.startTechno()
+                            barCharts.startAnimation(analyser)
+                        }
                     }
                 }
             }
@@ -81,15 +83,15 @@ class ChartCard {
             }
 
             onMouseEnter { _ ->
-                if (document.getElementById("overlay")?.style?.display == "none") {
-                    technoPlayer.startTechno()
-                    barCharts.startBarAnimation()
+                if (document.getElementById("overlay") == null && !technoPlayer.isPlaying()) {
+                    val analyser = technoPlayer.startTechno()
+                    barCharts.startAnimation(analyser)
                 }
             }
 
             onMouseLeave { _ ->
                 technoPlayer.stopTechno()
-                barCharts.stopBarAnimation()
+                barCharts.stopAnimation()
             }
         }
     }

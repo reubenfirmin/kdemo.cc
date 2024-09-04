@@ -3,7 +3,7 @@ package org.example.pages.home.card3
 import web.audio.*
 import kotlin.random.Random
 
-class HiHat(val audioContext: AudioContext) {
+class HiHat(private val audioContext: AudioContext, private val analyser: AnalyserNode) {
 
     private val hihatGain = audioContext.createGain().apply {
         gain.setValueAtTime(0F, audioContext.currentTime)
@@ -18,6 +18,7 @@ class HiHat(val audioContext: AudioContext) {
     init {
         hihatFilter.connect(hihatGain)
         hihatGain.connect(audioContext.destination)
+        hihatGain.connect(analyser)
     }
 
     private val noiseBuffer = audioContext.let { ctx ->
