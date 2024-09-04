@@ -1,7 +1,8 @@
 # Kotlin.js + Tailwind + Kotlinx.html demos
 
-This is a template project which combines kotlin.js and kotlinx.html. This gives you a JSX-like way to build frontend UIs, without needing anything heavyweight
-like React (that said, no performance testing has been done on this yet.)
+This is project demonstrates combines kotlin.js and kotlinx.html. This gives you a JSX-like way to build frontend UIs, without needing anything heavyweight like React (that said, no performance testing has been done on this yet.)
+
+Status: weekend code, not yet used in production.
 
 [Hosted Demo](http://kdemo.cc)
 
