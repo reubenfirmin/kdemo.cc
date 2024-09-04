@@ -5,7 +5,7 @@ import org.example.pages.home.components.card
 
 
 fun FlowContent.scopeDemoCard() {
-    card("bg-gradient-to-br from-blue-700 to-purple-800 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden") {
+    card("bg-gradient-to-br from-blue-700 to-purple-800 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden flex flex-col justify-between") {
         div("p-6") {
             h2("text-2xl font-bold mb-3 text-white") {
                 +"Scope Demo"

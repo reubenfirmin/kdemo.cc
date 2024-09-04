@@ -55,8 +55,8 @@ class Index {
                         blogDemoCard()
                         chartCard()
                         bookSearchCard()
-                        scopeDemoCard()
                         kanbanDemoCard()
+                        scopeDemoCard()
                     }
                 }
             }
