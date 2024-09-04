@@ -1,6 +1,6 @@
 # Kotlin.js + Tailwind + Kotlinx.html demos
 
-This is project demonstrates combines kotlin.js and kotlinx.html. This gives you a JSX-like way to build frontend UIs, without needing anything heavyweight like React (that said, no performance testing has been done on this yet.)
+This project demonstrates a way to combine kotlin.js and kotlinx.html. This gives you a JSX-like way to build frontend UIs, without needing anything heavyweight like React (that said, no performance testing has been done on this yet.) This also uses kotlin-browser, a library that provides an update to the older org.w3c.dom classes provided in kotlin.js.
 
 Status: weekend code, not yet used in production.
 
@@ -14,9 +14,9 @@ This will open a browser tab which will hot reload on changes to code. Tailwind 
 
 ## To Build For Production
 
-`./gradlew clean build`
+`./gradlew deploy`
 
-Deploy the contents of `build/dist/js/productionExecutable/`.
+Deploy the contents of `dist`.
 
 ## Debug in IDE
 
