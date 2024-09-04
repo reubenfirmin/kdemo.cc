@@ -12,8 +12,8 @@ class TechnoPlayer {
     private var rhythmIntervalId: Int? = null
     private var beatCount = 0
 
-    private var tb303Cutoff = logToLinear(1000)
-    private var tb303Delay = 70
+    private var tb303Cutoff = logToLinear(353)
+    private var tb303Delay = 23
     private var activeGrid = 0
     private var started = false
 
@@ -69,6 +69,7 @@ class TechnoPlayer {
         require(cutoff in 0..1000) {
             "cutoff must be between 0 and 1000."
         }
+//        console.log(cutoff)
         tb303Cutoff = linearToLog(cutoff).toInt()
     }
 
@@ -79,6 +80,7 @@ class TechnoPlayer {
      */
     fun setDelay(delay: Int) {
         tb303Delay = delay
+//        console.log(delay.toLong())
     }
 
     fun getDelayDisplay() = tb303Delay

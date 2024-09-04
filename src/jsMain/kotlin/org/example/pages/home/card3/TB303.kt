@@ -21,7 +21,7 @@ class TB303(audioContext: AudioContext, analyser: AnalyserNode) {
     }
 
     private val delay: DelayNode = audioContext.createDelay().apply {
-        delayTime.value = 0.7f
+        delayTime.value = 0.3f
     }
 
     private val delayFeedback: GainNode = audioContext.createGain().apply {
