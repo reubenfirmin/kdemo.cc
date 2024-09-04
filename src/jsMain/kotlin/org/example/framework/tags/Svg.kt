@@ -51,9 +51,6 @@ open class SvgTag(classes: String?, consumer: TagConsumer<*>) : HTMLTag(
     fun mask(block: SvgMask.() -> Unit = {}) =
         SvgMask(consumer).visit(block)
 
-    fun g(block: SvgG.() -> Unit = {}) =
-        SvgG(consumer).visit(block)
-
     fun defs(block: SvgDefs.() -> Unit = {}) =
         SvgDefs(consumer).visit(block)
 
@@ -74,6 +71,10 @@ open class SvgTag(classes: String?, consumer: TagConsumer<*>) : HTMLTag(
         set(newValue) {
             stringAttr[this, "height"] = newValue
         }
+
+    fun g(classes: String? = null, block: SvgG.() -> Unit = {}) =
+        SvgG(classes, consumer).visit(block)
+
 }
 
 
@@ -84,11 +85,13 @@ class SvgPath(consumer: TagConsumer<*>) : HTMLTag("path", consumer, emptyMap(), 
         set(newValue) {
             stringAttr[this, "id"] = newValue
         }
+
     var d: String
         get() = stringAttr[this, "d"]
         set(newValue) {
             stringAttr[this, "d"] = newValue
         }
+
     var transform: String
         get() = stringAttr[this, "transform"]
         set(newValue) {
@@ -262,7 +265,7 @@ class SvgMask(consumer: TagConsumer<*>) : HTMLTag("mask", consumer, emptyMap(), 
 }
 
 
-class SvgG(consumer: TagConsumer<*>) : HTMLTag("g", consumer, emptyMap(), "http://www.w3.org/2000/svg", inlineTag = false, emptyTag = false) {
+class SvgG(classes: String?, consumer: TagConsumer<*>) : HTMLTag("g", consumer, attributesMapOf("class", classes), "http://www.w3.org/2000/svg", inlineTag = false, emptyTag = false) {
 
     fun use(block: SvgUse.() -> Unit = {}) =
         SvgUse(consumer).visit(block)
@@ -289,7 +292,6 @@ class SvgG(consumer: TagConsumer<*>) : HTMLTag("g", consumer, emptyMap(), "http:
             stringAttr[this, "mask"] = newValue
         }
 
-
     fun path(block: SvgPath.() -> Unit = {}) =
         SvgPath(consumer).visit(block)
 
@@ -297,7 +299,14 @@ class SvgG(consumer: TagConsumer<*>) : HTMLTag("g", consumer, emptyMap(), "http:
         SvgRect(consumer).visit(block)
 
     fun g(block: SvgG.() -> Unit = {}) =
-        SvgG(consumer).visit(block)
+        SvgG(null, consumer).visit(block)
+
+    fun line(block: SvgLine.() -> Unit = {}) =
+        SvgLine(consumer).visit(block)
+
+    fun circle(block: SvgCircle.() -> Unit = {}) =
+        SvgCircle(consumer).visit(block)
+
 
 }
 
@@ -637,5 +646,44 @@ class SvgCircle(consumer: TagConsumer<*>) : HTMLTag("circle", consumer, emptyMap
             stringAttr[this, "stroke-width"] = newValue
         }
 }
+
+class SvgLine(consumer: TagConsumer<*>) : HTMLTag("line", consumer, emptyMap(), "http://www.w3.org/2000/svg", false, false) {
+    var x1: String
+        get() = stringAttr[this, "x1"]
+        set(newValue) {
+            stringAttr[this, "x1"] = newValue
+        }
+
+    var y1: String
+        get() = stringAttr[this, "y1"]
+        set(newValue) {
+            stringAttr[this, "y1"] = newValue
+        }
+
+    var x2: String
+        get() = stringAttr[this, "x2"]
+        set(newValue) {
+            stringAttr[this, "x2"] = newValue
+        }
+
+    var y2: String
+        get() = stringAttr[this, "y2"]
+        set(newValue) {
+            stringAttr[this, "y2"] = newValue
+        }
+
+    var stroke: String
+        get() = stringAttr[this, "stroke"]
+        set(newValue) {
+            stringAttr[this, "stroke"] = newValue
+        }
+
+    var strokeWidth: String
+        get() = stringAttr[this, "stroke-width"]
+        set(newValue) {
+            stringAttr[this, "stroke-width"] = newValue
+        }
+}
+
 
 internal val stringAttr: Attribute<String> = StringAttribute()
