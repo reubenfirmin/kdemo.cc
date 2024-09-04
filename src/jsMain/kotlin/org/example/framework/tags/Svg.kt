@@ -311,6 +311,9 @@ class SvgDefs(consumer: TagConsumer<*>) : HTMLTag("defs", consumer, emptyMap(), 
     fun path(block: SvgPath.() -> Unit = {}) =
         SvgPath(consumer).visit(block)
 
+    fun mask(block: SvgMask.() -> Unit = {}) =
+        SvgMask(consumer).visit(block)
+
     class SvgFilter(consumer: TagConsumer<*>) :
         HTMLTag("filter", consumer, emptyMap(), inlineTag = false, emptyTag = false) {
 
