@@ -12,7 +12,7 @@ class TechnoPlayer {
     private var rhythmIntervalId: Int? = null
     private var beatCount = 0
 
-    private var tb303Cutoff = logToLinear(353)
+    private var tb303Cutoff = logToLinear(40)
     private var tb303Delay = 23
     private var activeGrid = 0
     private var started = false

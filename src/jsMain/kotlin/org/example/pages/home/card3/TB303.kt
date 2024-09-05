@@ -106,7 +106,6 @@ class TB303(val audioContext: AudioContext, analyser: AnalyserNode) {
             (8 * (safeFrequency / 20000f)).coerceIn(0.01f, 8f),
             audioContext.currentTime + 0.01
         )
-        console.log(filter.frequency.value)
     }
 
     fun setDelayTime(delayPercent: Int) {
