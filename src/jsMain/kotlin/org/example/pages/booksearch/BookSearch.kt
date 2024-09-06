@@ -3,6 +3,7 @@ package org.example.pages.booksearch
 import kotlinx.html.*
 import kotlinx.html.js.onSubmitFunction
 import org.example.framework.dom.onClick
+import org.example.framework.dom.onSubmit
 import org.example.framework.interop.appendTo
 import web.dom.document
 import web.html.HTMLElement
@@ -27,7 +28,7 @@ class BookSearch {
                 }
             }
 
-            main("max-w-7xl mx-auto py-6 sm:px-6 lg:px-8") {
+            div("max-w-7xl mx-auto py-6 sm:px-6 lg:px-8") {
                 div("px-4 py-6 sm:px-0") {
                     div("mb-8") {
                         p("text-xl text-center text-gray-700") {
@@ -36,7 +37,8 @@ class BookSearch {
                         div("mt-4 flex justify-center") {
                             form {
                                 id = "search-form"
-                                onSubmitFunction = { event ->
+
+                                onSubmit { event ->
                                     event.preventDefault()
                                     handleSearch()
                                 }
@@ -48,6 +50,7 @@ class BookSearch {
                                     autoFocus = true
                                     placeholder = "Enter book title"
                                 }
+
                                 button(classes = "px-4 py-2 border border-transparent text-sm font-medium rounded-r-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500") {
                                     id = "search"
                                     type = ButtonType.submit
@@ -55,7 +58,6 @@ class BookSearch {
                                 }
                             }
                         }
-
                     }
 
                     div("grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6") {
@@ -120,7 +122,7 @@ class BookSearch {
                                 +(book.author_name?.firstOrNull() ?: "Unknown Author")
                             }
                             div("flex items-center mt-2") {
-                                val rating = Random.nextDouble(3.5, 5.0)
+                                val rating = Random.nextDouble(2.5, 5.0)
                                 for (i in 1..5) {
                                     span("text-yellow-400") {
                                         +if (i <= rating.toInt()) "★" else "☆"

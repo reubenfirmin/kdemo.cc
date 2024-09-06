@@ -2,12 +2,12 @@ package org.example.pages.kanban
 
 import js.objects.jso
 import kotlinx.html.*
-import kotlinx.html.dom.append
 
 import org.example.framework.dom.onClick
 import org.example.framework.dom.onKeyUp
 import org.example.framework.dom.onMount
 import org.example.framework.interop.appendTo
+import org.example.framework.interop.clear
 import org.example.framework.libs.Sortable
 import org.example.framework.libs.SortableEvent
 import web.dom.document
@@ -16,8 +16,11 @@ import web.html.HTMLInputElement
 import kotlin.random.Random
 
 class Kanban {
+
     data class Task(val id: String, val content: String)
     data class Column(val name: String, val tasks: MutableList<Task>)
+
+    private val boardContainerId = "board-container"
 
     private val columns = mutableListOf(
         Column("To Do", mutableListOf(Task("1", "Task 1"), Task("2", "Task 2"), Task("3", "Task 3"))),
@@ -27,7 +30,8 @@ class Kanban {
 
     fun TagConsumer<*>.kanbanBoard() {
         div("min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 flex flex-col") {
-            main("flex-grow p-8") {
+            div("flex-grow p-8") {
+                id = "board-container"
                 div("flex space-x-6") {
                     columns.forEachIndexed { index, column ->
                         kanbanColumn(column, index)
@@ -43,8 +47,9 @@ class Kanban {
             h2("text-2xl font-bold mb-4 text-white") {
                 +column.name
             }
+            val columnId = "column-$columnIndex"
             div("space-y-3 min-h-[200px] flex flex-col") {
-                id = "column-$columnIndex"
+                id = columnId
                 column.tasks.forEach { task ->
                     kanbanCard(task, columnIndex)
                 }
@@ -54,7 +59,7 @@ class Kanban {
                 }
 
                 onMount {
-                    val container = document.getElementById(this@div.id) as HTMLElement
+                    val container = document.getElementById(columnId) as HTMLElement
                     Sortable.create(container, jso {
                         group = "shared"
                         animation = 150
@@ -155,8 +160,8 @@ class Kanban {
 
     private fun refreshBoard() {
         // Re-render the entire board
-        val boardContainer = document.querySelector("main") as HTMLElement
-        boardContainer.innerHTML = ""
+        val boardContainer = document.getElementById(boardContainerId) as HTMLElement
+        boardContainer.clear()
         boardContainer.appendTo().div("flex space-x-6") {
             columns.forEachIndexed { index, column ->
                 kanbanColumn(column, index)
