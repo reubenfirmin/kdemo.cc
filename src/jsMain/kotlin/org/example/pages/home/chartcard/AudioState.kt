@@ -1,4 +1,4 @@
-package org.example.pages.home.card3
+package org.example.pages.home.chartcard
 
 import web.audio.*
 
@@ -12,7 +12,7 @@ class AudioState {
     }
     var kickDrum = KickDrum(audioContext, analyser)
     var hiHat = HiHat(audioContext, analyser)
-    var tb303 = TB303(audioContext, analyser)
+    var synth = Synth(audioContext, analyser)
 
     fun currentTime() = audioContext.currentTime
 
@@ -21,7 +21,7 @@ class AudioState {
             isClosing = true
             kickDrum.disconnect()
             hiHat.disconnect()
-            tb303.disconnect()
+            synth.disconnect()
             audioContext.closeAsync().then { isClosing = false }
         }
     }
@@ -36,7 +36,7 @@ class AudioState {
             }
             kickDrum = KickDrum(audioContext, analyser)
             hiHat = HiHat(audioContext, analyser)
-            tb303 = TB303(audioContext, analyser)
+            synth = Synth(audioContext, analyser)
         } else {
             audioContext.resumeAsync()
         }

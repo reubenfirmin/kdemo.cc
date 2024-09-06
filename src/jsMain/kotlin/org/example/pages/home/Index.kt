@@ -5,7 +5,7 @@ import org.example.pages.home.card1.textStyleCard
 import org.example.pages.home.card2.animatedBackground
 import org.example.pages.home.card2.buttonClickCard
 import org.example.pages.home.card2.maskedBackgroundLayer
-import org.example.pages.home.card3.chartCard
+import org.example.pages.home.chartcard.chartCard
 
 class Index {
 

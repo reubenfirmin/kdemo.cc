@@ -1,4 +1,4 @@
-package org.example.pages.home.card3
+package org.example.pages.home.chartcard
 
 import kotlinx.html.*
 import org.example.framework.dom.onMouseEnter
@@ -45,42 +45,7 @@ class ChartCard {
                 renderBars()
             }
 
-            // TB-303 Control Sliders
-            div("mt-4") {
-                // Cutoff Frequency Slider
-                div("mb-2") {
-                    label("block text-sm font-medium text-gray-300") {
-                        +"Filter Cutoff"
-                    }
-                    input(type = InputType.range, classes = "w-full") {
-                        id = "cutoff"
-                        min = "0"
-                        max = "1000"
-                        value = technoPlayer.getCutoffDisplay().toString()
-                        step = "1"
-                        onInput { event ->
-                            technoPlayer.setCutoff((event.target as HTMLInputElement).value.toInt())
-                        }
-                    }
-                }
-
-                // Delay Time Slider
-                div {
-                    label("block text-sm font-medium text-gray-300") {
-                        +"Delay Time"
-                    }
-                    input(type = InputType.range, classes = "w-full") {
-                        id = "delay"
-                        min = "1"
-                        max = "100"
-                        value = technoPlayer.getDelayDisplay().toString()
-                        step = "1"
-                        onInput { event ->
-                            technoPlayer.setDelay((event.target as HTMLInputElement).value.toInt())
-                        }
-                    }
-                }
-            }
+            sliders(technoPlayer)
 
             onMouseEnter { _ ->
                 if (document.getElementById("overlay") == null && !technoPlayer.isPlaying()) {
@@ -92,6 +57,46 @@ class ChartCard {
             onMouseLeave { _ ->
                 technoPlayer.stopTechno()
                 barCharts.stopAnimation()
+            }
+        }
+    }
+
+}
+
+fun FlowContent.sliders(technoPlayer: TechnoPlayer) {
+    // TB-303 Control Sliders
+    div("mt-4") {
+        // Cutoff Frequency Slider
+        div("mb-2") {
+            label("block text-sm font-medium text-gray-300") {
+                +"Filter Cutoff"
+            }
+            input(type = InputType.range, classes = "w-full") {
+                id = "cutoff"
+                min = "0"
+                max = "1000"
+                value = technoPlayer.getCutoffDisplay().toString()
+                step = "1"
+                onInput { event ->
+                    technoPlayer.setCutoff((event.target as HTMLInputElement).value.toInt())
+                }
+            }
+        }
+
+        // Delay Time Slider
+        div {
+            label("block text-sm font-medium text-gray-300") {
+                +"Delay Time"
+            }
+            input(type = InputType.range, classes = "w-full") {
+                id = "delay"
+                min = "1"
+                max = "100"
+                value = technoPlayer.getDelayDisplay().toString()
+                step = "1"
+                onInput { event ->
+                    technoPlayer.setDelay((event.target as HTMLInputElement).value.toInt())
+                }
             }
         }
     }

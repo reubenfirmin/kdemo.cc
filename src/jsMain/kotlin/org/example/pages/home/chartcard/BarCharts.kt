@@ -1,4 +1,4 @@
-package org.example.pages.home.card3
+package org.example.pages.home.chartcard
 
 import js.typedarrays.Uint8Array
 import kotlinx.browser.window
@@ -11,7 +11,7 @@ import kotlin.math.pow
 
 class BarCharts {
 
-    private val barCount = 20 // Number of frequency bars to display
+    private val barCount = 20
     private var animationId: Int? = null
 
 
@@ -24,8 +24,9 @@ class BarCharts {
                 viewBox = "0 0 100 100"
                 preserveAspectRatio = "none"
 
-                val barWidthPercent = 80.0 / barCount  // 80% total width for bars, 20% for gaps
-                val gapWidthPercent = 20.0 / (barCount + 1)  // Distribute remaining 20% evenly
+                // 80% total width for bars, 20% for gaps
+                val barWidthPercent = 80.0 / barCount
+                val gapWidthPercent = 20.0 / (barCount + 1)
 
                 repeat(barCount) { index ->
                     val xPosition = gapWidthPercent * (index + 1) + barWidthPercent * index
@@ -54,15 +55,15 @@ class BarCharts {
                 val value = dataArray[index]
                 val normalizedValue = value / 255.0 // Normalize to 0-1 range
 
-                // Apply exponential scaling to emphasize upper range
+                // emphasize upper range
                 val scaledValue = normalizedValue.pow(0.5)
-                val height = (scaledValue * 100).toInt() // Scale to 0-100
 
+                val height = (scaledValue * 100).toInt()
                 bar.setAttribute("height", height.toString())
                 bar.setAttribute("y", (100 - height).toString())
 
-                // Color based on frequency intensity
-                val hue = (240 - value * 240 / 255) // Blue to Red
+                // color based on frequency intensity
+                val hue = (240 - value * 240 / 255)
                 bar.setAttribute("fill", "hsl($hue, 100%, 50%)")
             }
             animationId = window.requestAnimationFrame { animate() }
@@ -75,11 +76,9 @@ class BarCharts {
         animationId?.let { window.cancelAnimationFrame(it) }
         animationId = null
 
-        // Reset bars to initial state
+        // decolor bars
         document.querySelectorAll("#frequency-chart rect").forEach { bar ->
-            bar.setAttribute("height", "0")
-            bar.setAttribute("y", "100")
-            bar.setAttribute("fill", "#4299e1")
+            bar.setAttribute("fill", "#6299e1")
         }
     }
 }

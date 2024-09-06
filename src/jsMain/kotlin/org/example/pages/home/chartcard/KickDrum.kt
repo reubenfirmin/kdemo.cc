@@ -1,4 +1,4 @@
-package org.example.pages.home.card3
+package org.example.pages.home.chartcard
 
 import web.audio.AnalyserNode
 import web.audio.AudioContext
@@ -29,7 +29,7 @@ class KickDrum(audioContext: AudioContext, analyser: AnalyserNode) {
         kickGain.gain.cancelScheduledValues(time)
         kickGain.gain.setValueAtTime(0f, time)
         kickGain.gain.linearRampToValueAtTime(1f, time + 0.005)
-        kickGain.gain.exponentialRampToValueAtTime(0.01f, time + 0.4)
+        kickGain.gain.exponentialRampToValueAtTime(0.01f, time + 0.5)
     }
 
     fun disconnect() {

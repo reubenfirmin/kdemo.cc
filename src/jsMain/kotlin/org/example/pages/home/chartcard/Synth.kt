@@ -1,21 +1,35 @@
-package org.example.pages.home.card3
+package org.example.pages.home.chartcard
 
 import js.typedarrays.Float32Array
 import web.audio.*
 import kotlin.math.abs
 import kotlin.math.pow
 
-class TB303(val audioContext: AudioContext, analyser: AnalyserNode) {
+/**
+ * [osc1] [osc1Mix] \                                                                  [output]
+ *                  |                                                                     |
+ *                  [preFilterGain] [preFilterDistortion] [envelope] [filter] [delay1] [delay2] [delayFeedback]
+ *                  |                                                            |___________________|
+ * [osc2] [osc1Mix] /
+ */
+class Synth(val audioContext: AudioContext, analyser: AnalyserNode) {
 
-    private val oscillator: OscillatorNode = audioContext.createOscillator().apply {
+    private val oscillator1: OscillatorNode = audioContext.createOscillator().apply {
         type = OscillatorType.sawtooth
         start()
     }
 
-    private val filter: BiquadFilterNode = audioContext.createBiquadFilter().apply {
-        type = BiquadFilterType.lowpass
-        frequency.value = 1000f
-        Q.value = 18f
+    private val osc1Mix: GainNode = audioContext.createGain().apply {
+        gain.value = 1f
+    }
+
+    private val oscillator2: OscillatorNode = audioContext.createOscillator().apply {
+        type = OscillatorType.sawtooth
+        start()
+    }
+
+    private val osc2Mix: GainNode = audioContext.createGain().apply {
+        gain.value = 0.8f
     }
 
     private val prefilterGain = audioContext.createGain().apply {
@@ -41,6 +55,12 @@ class TB303(val audioContext: AudioContext, analyser: AnalyserNode) {
         gain.value = 0f
     }
 
+    private val filter: BiquadFilterNode = audioContext.createBiquadFilter().apply {
+        type = BiquadFilterType.lowpass
+        frequency.value = 1000f
+        Q.value = 18f
+    }
+
     private val delay1: DelayNode = audioContext.createDelay().apply {
         delayTime.value = 0.3f
     }
@@ -58,21 +78,25 @@ class TB303(val audioContext: AudioContext, analyser: AnalyserNode) {
     }
 
     init {
-        oscillator.connect(preFilterDistortion)
+        oscillator1.connect(osc1Mix)
+        oscillator2.connect(osc2Mix)
+        osc1Mix.connect(preFilterDistortion)
+        osc2Mix.connect(preFilterDistortion)
+
         preFilterDistortion.connect(prefilterGain)
         prefilterGain.connect(envelope)
         envelope.connect(filter)
 
         filter.connect(delay1)
         // could mix wet/dry here
-        filter.connect(output)
+//        filter.connect(output)
 
         delay1.connect(delay2)
+        // could mix wet/dry here
         delay2.connect(delayFeedback)
+        delay2.connect(output)
         delayFeedback.connect(delay1)
 
-        // could mix wet/dry here
-        delayFeedback.connect(output)
 
         output.connect(audioContext.destination)
         output.connect(analyser)
@@ -81,7 +105,9 @@ class TB303(val audioContext: AudioContext, analyser: AnalyserNode) {
     fun play(time: Double, note: Int, octave: Int) {
         val frequency = 440 * 2.0.pow((note - 69 + (octave - 4) * 12) / 12.0)
 
-        oscillator.frequency.setValueAtTime(frequency.toFloat(), time)
+        oscillator1.frequency.setValueAtTime(frequency.toFloat(), time)
+        // detune
+        oscillator2.frequency.setValueAtTime((frequency + 2).toFloat(), time)
 
         envelope.gain.cancelScheduledValues(time)
         envelope.gain.setValueAtTime(0f, time)
@@ -114,7 +140,8 @@ class TB303(val audioContext: AudioContext, analyser: AnalyserNode) {
     }
 
     fun disconnect() {
-        oscillator.disconnect()
+        oscillator1.disconnect()
+        oscillator2.disconnect()
         prefilterGain.disconnect()
         preFilterDistortion.disconnect()
         filter.disconnect()
@@ -125,3 +152,4 @@ class TB303(val audioContext: AudioContext, analyser: AnalyserNode) {
         output.disconnect()
     }
 }
+

@@ -1,4 +1,4 @@
-package org.example.pages.home.card3
+package org.example.pages.home.chartcard
 
 import kotlinx.browser.window
 import web.audio.AnalyserNode
@@ -33,7 +33,7 @@ class TechnoPlayer {
 
             val interval = (60.0 / 130 * 1000 / 4).toInt() // 130bpm 16th notes...I think
 
-            val song = HitTheClub(kickDrum, hiHat, tb303)
+            val song = HitTheClub(kickDrum, hiHat, synth)
 
             activeGrid++
 
@@ -41,8 +41,8 @@ class TechnoPlayer {
             // TODO is there a better clock? surely
             rhythmIntervalId = window.setInterval({
                 // adjust these each tick just for state simplicity
-                tb303.setDelayTime(this@TechnoPlayer.tb303Delay)
-                tb303.setFilterCutoff(this@TechnoPlayer.tb303Cutoff)
+                synth.setDelayTime(this@TechnoPlayer.tb303Delay)
+                synth.setFilterCutoff(this@TechnoPlayer.tb303Cutoff)
                 song.grid(beatCount++, currentTime())
             }, interval)
             return analyser
