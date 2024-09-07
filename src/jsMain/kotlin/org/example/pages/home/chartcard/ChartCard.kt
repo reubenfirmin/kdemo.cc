@@ -1,6 +1,7 @@
 package org.example.pages.home.chartcard
 
 import kotlinx.html.*
+import org.example.audio.TechnoPlayer
 import org.example.framework.dom.onMouseEnter
 import org.example.framework.dom.onMouseLeave
 import org.example.pages.home.components.card

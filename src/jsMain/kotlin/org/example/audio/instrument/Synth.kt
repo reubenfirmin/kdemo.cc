@@ -1,4 +1,4 @@
-package org.example.pages.home.chartcard
+package org.example.audio.instrument
 
 import js.typedarrays.Float32Array
 import web.audio.*

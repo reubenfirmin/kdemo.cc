@@ -1,4 +1,4 @@
-package org.example.pages.home.chartcard
+package org.example.audio.instrument
 
 import web.audio.*
 import kotlin.random.Random

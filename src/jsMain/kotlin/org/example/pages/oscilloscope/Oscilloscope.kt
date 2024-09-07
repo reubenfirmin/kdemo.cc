@@ -185,6 +185,7 @@ class Oscilloscope {
         canvasContext?.let { ctx ->
             ctx.beginPath()
             ctx.lineWidth = 2.0
+            // TODO move this to the function state
             ctx.strokeStyle = when (name) {
                 "chirp" -> "#00FFFF"  // Cyan
                 "gaussian" -> "#00FF00"  // Bright Green

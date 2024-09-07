@@ -1,4 +1,4 @@
-package org.example.pages.home.chartcard
+package org.example.audio
 
 import kotlinx.browser.window
 import web.audio.AnalyserNode

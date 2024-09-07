@@ -1,4 +1,8 @@
-package org.example.pages.home.chartcard
+package org.example.audio
+
+import org.example.audio.instrument.HiHat
+import org.example.audio.instrument.KickDrum
+import org.example.audio.instrument.Synth
 
 class HitTheClub(
     private val kickDrum: KickDrum,
