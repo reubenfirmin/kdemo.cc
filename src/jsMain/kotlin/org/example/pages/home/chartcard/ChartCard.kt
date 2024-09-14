@@ -1,6 +1,7 @@
 package org.example.pages.home.chartcard
 
 import kotlinx.html.*
+import org.example.audio.HitTheClub
 import org.example.audio.TechnoPlayer
 import org.example.framework.dom.onMouseEnter
 import org.example.framework.dom.onMouseLeave
@@ -8,12 +9,12 @@ import org.example.pages.home.components.card
 import web.dom.document
 import org.example.framework.dom.onClick
 import org.example.framework.dom.onInput
-import web.html.HTMLInputElement
 
 class ChartCard {
 
     private val barCharts = BarCharts()
     private val technoPlayer = TechnoPlayer()
+    private val grid = HitTheClub.createGrid()
 
     fun FlowContent.render() {
         card {
@@ -31,7 +32,7 @@ class ChartCard {
                         event.preventDefault()
                         document.getElementById(this@div.id)!!.remove()
                         if (!technoPlayer.isPlaying()) {
-                            val analyser = technoPlayer.startTechno()
+                            val analyser = technoPlayer.startTechno(grid)
                             barCharts.startAnimation(analyser)
                         }
                     }
@@ -50,7 +51,7 @@ class ChartCard {
 
             onMouseEnter { _ ->
                 if (document.getElementById("overlay") == null && !technoPlayer.isPlaying()) {
-                    val analyser = technoPlayer.startTechno()
+                    val analyser = technoPlayer.startTechno(grid)
                     barCharts.startAnimation(analyser)
                 }
             }
@@ -76,10 +77,11 @@ fun FlowContent.sliders(technoPlayer: TechnoPlayer) {
                 id = "cutoff"
                 min = "0"
                 max = "1000"
-                value = technoPlayer.getCutoffDisplay().toString()
+                // TODO
+                value = "10"//technoPlayer.getCutoffDisplay().toString()
                 step = "1"
                 onInput { event ->
-                    technoPlayer.setCutoff((event.target as HTMLInputElement).value.toInt())
+                    //technoPlayer.setCutoff((event.target as HTMLInputElement).value.toInt())
                 }
             }
         }
@@ -93,10 +95,11 @@ fun FlowContent.sliders(technoPlayer: TechnoPlayer) {
                 id = "delay"
                 min = "1"
                 max = "100"
-                value = technoPlayer.getDelayDisplay().toString()
+                // TODO
+                value = "10"//technoPlayer.getDelayDisplay().toString()
                 step = "1"
                 onInput { event ->
-                    technoPlayer.setDelay((event.target as HTMLInputElement).value.toInt())
+                    //technoPlayer.setDelay((event.target as HTMLInputElement).value.toInt())
                 }
             }
         }

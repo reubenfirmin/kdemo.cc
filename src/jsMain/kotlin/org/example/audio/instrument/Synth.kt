@@ -12,7 +12,9 @@ import kotlin.math.pow
  *                  |                                                            |___________________|
  * [osc2] [osc1Mix] /
  */
-class Synth(val audioContext: AudioContext, analyser: AnalyserNode) {
+class Synth(private val audioContext: AudioContext, analyser: AnalyserNode): Instrument {
+
+    private val scheduledEvents = ArrayDeque<Double>()
 
     private val oscillator1: OscillatorNode = audioContext.createOscillator().apply {
         type = OscillatorType.sawtooth
@@ -24,7 +26,7 @@ class Synth(val audioContext: AudioContext, analyser: AnalyserNode) {
     }
 
     private val oscillator2: OscillatorNode = audioContext.createOscillator().apply {
-        type = OscillatorType.sawtooth
+        type = OscillatorType.sine
         start()
     }
 
@@ -80,28 +82,28 @@ class Synth(val audioContext: AudioContext, analyser: AnalyserNode) {
     init {
         oscillator1.connect(osc1Mix)
         oscillator2.connect(osc2Mix)
-        osc1Mix.connect(preFilterDistortion)
-        osc2Mix.connect(preFilterDistortion)
+        osc1Mix.connect(envelope)
+        osc2Mix.connect(envelope)
 
-        preFilterDistortion.connect(prefilterGain)
-        prefilterGain.connect(envelope)
+//        preFilterDistortion.connect(prefilterGain)
+//        prefilterGain.connect(envelope)
         envelope.connect(filter)
 
         filter.connect(delay1)
         // could mix wet/dry here
-//        filter.connect(output)
+        filter.connect(output)
 
-        delay1.connect(delay2)
+//        delay1.connect(delay2)
         // could mix wet/dry here
-        delay2.connect(delayFeedback)
-        delay2.connect(output)
-        delayFeedback.connect(delay1)
-
+//        delay2.connect(delayFeedback)
+//        delay2.connect(output)
+//        delayFeedback.connect(delay1)
 
         output.connect(audioContext.destination)
         output.connect(analyser)
     }
 
+    // TODO velocity
     fun play(time: Double, note: Int, octave: Int) {
         val frequency = 440 * 2.0.pow((note - 69 + (octave - 4) * 12) / 12.0)
 
@@ -122,6 +124,8 @@ class Synth(val audioContext: AudioContext, analyser: AnalyserNode) {
         filter.frequency.setValueAtTime(currentCutoff, time)
         filter.frequency.linearRampToValueAtTime(peakCutoff, time + 0.05) // Quick sweep up
         filter.frequency.exponentialRampToValueAtTime(currentCutoff, time + 0.1) // Quick sweep down
+
+        scheduledEvents.addLast(time)
     }
 
     fun setFilterCutoff(frequency: Int) {
@@ -150,6 +154,18 @@ class Synth(val audioContext: AudioContext, analyser: AnalyserNode) {
         delay2.disconnect()
         delayFeedback.disconnect()
         output.disconnect()
+    }
+
+    override fun scheduledEventTimes(): List<Double> {
+        cleanupPastEvents()
+        return scheduledEvents
+    }
+
+    private fun cleanupPastEvents() {
+        val currentTime = this.audioContext.currentTime
+        while (scheduledEvents.isNotEmpty() && scheduledEvents.first() < currentTime) {
+            scheduledEvents.removeFirst()
+        }
     }
 }
 

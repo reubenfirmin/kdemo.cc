@@ -4,7 +4,9 @@ import web.audio.AnalyserNode
 import web.audio.AudioContext
 import web.audio.OscillatorType
 
-class KickDrum(audioContext: AudioContext, analyser: AnalyserNode) {
+class KickDrum(val audioContext: AudioContext, analyser: AnalyserNode): Instrument {
+
+    private val scheduledEvents = ArrayDeque<Double>()
 
     private val kickOscillator= audioContext.createOscillator().apply {
         type = OscillatorType.sine
@@ -22,19 +24,31 @@ class KickDrum(audioContext: AudioContext, analyser: AnalyserNode) {
     }
 
     fun play(time: Double) {
-        kickOscillator.frequency.cancelScheduledValues(time)
         kickOscillator.frequency.setValueAtTime(150f, time)
         kickOscillator.frequency.exponentialRampToValueAtTime(30f, time + 0.05)
 
-        kickGain.gain.cancelScheduledValues(time)
         kickGain.gain.setValueAtTime(0f, time)
         kickGain.gain.linearRampToValueAtTime(1f, time + 0.005)
         kickGain.gain.exponentialRampToValueAtTime(0.01f, time + 0.5)
+
+        scheduledEvents.addLast(time)
     }
 
     fun disconnect() {
         kickOscillator.disconnect()
         kickGain.disconnect()
         kickOscillator.stop()
+    }
+
+    override fun scheduledEventTimes(): List<Double> {
+        cleanupPastEvents()
+        return scheduledEvents
+    }
+
+    private fun cleanupPastEvents() {
+        val currentTime = this.audioContext.currentTime
+        while (scheduledEvents.isNotEmpty() && scheduledEvents.first() < currentTime) {
+            scheduledEvents.removeFirst()
+        }
     }
 }

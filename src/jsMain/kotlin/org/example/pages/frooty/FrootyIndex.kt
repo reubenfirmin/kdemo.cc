@@ -1,9 +1,13 @@
 package org.example.pages.frooty
 
 import kotlinx.html.*
+import org.example.audio.TechnoPlayer
+import org.example.audio.instrument.InstrumentId
+import org.example.audio.grid.Grid
+import org.example.audio.grid.GridRow
+import org.example.audio.grid.GridEvent
 import org.example.framework.dom.onClick
 import org.example.framework.dom.onInput
-import org.example.audio.TechnoPlayer
 import web.animations.FrameRequestId
 import web.animations.requestAnimationFrame
 import web.animations.cancelAnimationFrame
@@ -15,39 +19,19 @@ import web.uievents.MouseEvent
 import kotlin.math.*
 
 class Frooty {
+
     private val TOTAL_ROWS = 9
     private val MAX_DIVISIONS = 32
-    private val INSTRUMENTS = listOf("Bass Drum", "Hi-Hat", "Synth")
 
-    private var rows = List(TOTAL_ROWS) { RowData(4, Instrument.BASSDRUM, 48, mutableSetOf()) }
-    private var bpm = 120
-    private var isPlaying = false
+    private var grid = Grid(1, List(TOTAL_ROWS) { GridRow(InstrumentId.BASSDRUM, List(4) { null }) })
     private var activeRow: Int? = null
-    private var rotation = 0.0
 
     private lateinit var canvas: HTMLCanvasElement
     private var animationId: FrameRequestId? = null
 
     private val technoPlayer = TechnoPlayer()
 
-    private enum class Instrument(val label: String) {
-        BASSDRUM("Bass Drum"),
-        HIHAT("Hi Hat"),
-        SYNTH("Synth");
-
-        companion object {
-            fun from(str: String): Instrument {
-                return entries.first { it.label == str }
-            }
-        }
-    }
-
-    private data class RowData(
-        var divisions: Int,
-        var instrument: Instrument,
-        var note: Int,
-        var activeDivisions: MutableSet<Int>
-    )
+    private var lastTickTime = 0.0
 
     fun FlowContent.render() {
         div("flex h-screen bg-gray-900 text-white") {
@@ -72,18 +56,18 @@ class Frooty {
                     input(type = InputType.range, classes = "w-full") {
                         min = "60"
                         max = "240"
-                        value = bpm.toString()
+                        value = technoPlayer.bpm().toString()
                         onInput { event ->
-                            bpm = (event.target as HTMLInputElement).value.toInt()
+                            technoPlayer.updateBPM((event.target as HTMLInputElement).value.toInt())
                         }
                     }
                     span {
-                        +"$bpm BPM"
+                        +"${technoPlayer.bpm()} BPM"
                     }
                 }
                 div("mb-4") {
                     button(classes = "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded") {
-                        +if (isPlaying) "Pause" else "Play"
+                        +if (technoPlayer.isPlaying()) "Pause" else "Play"
                         onClick { _ ->
                             togglePlay()
                         }
@@ -102,7 +86,7 @@ class Frooty {
                                 }
                             }
                             span {
-                                +"${rows[rowIndex].divisions}"
+                                +"${grid.rows[rowIndex].divisions.size}"
                             }
                             button(classes = "ml-2") {
                                 +"+"
@@ -117,11 +101,11 @@ class Frooty {
                             +"Instrument"
                         }
                         select(classes = "w-full bg-gray-700 text-white") {
-                            INSTRUMENTS.forEach { instrument ->
+                            InstrumentId.values().forEach { instrument ->
                                 option {
-                                    value = instrument
-                                    selected = instrument == rows[rowIndex].instrument.label
-                                    +instrument
+                                    value = instrument.name
+                                    selected = instrument == grid.rows[rowIndex].instrument
+                                    +instrument.name.replace("_", " ")
                                 }
                             }
                             onInput { event ->
@@ -141,7 +125,7 @@ class Frooty {
                                 }
                             }
                             span {
-                                +"${rows[rowIndex].note}"
+                                +"${(grid.rows[rowIndex].divisions.firstOrNull { it != null }?.note ?: 48)}"
                             }
                             button(classes = "ml-2") {
                                 +"+"
@@ -161,48 +145,31 @@ class Frooty {
     }
 
     private fun togglePlay() {
-        isPlaying = !isPlaying
-        if (isPlaying) {
-            startAnimation()
-            technoPlayer.startTechno()
-        } else {
-            stopAnimation()
+        if (technoPlayer.isPlaying()) {
             technoPlayer.stopTechno()
+            stopAnimation()
+        } else {
+            technoPlayer.startTechno(grid)
+            startAnimation()
         }
     }
 
     private fun startAnimation() {
-        val interval = (60.0 / bpm) * 1000 / MAX_DIVISIONS
-        var lastTime = 0.0
-
-        fun animate(time: Double) {
-            if (time - lastTime >= interval) {
-                rotation = (rotation + (360.0 / MAX_DIVISIONS)) % 360.0
-                lastTime = time
-                drawSequencer()
-                playActiveNotes()
-            }
-            animationId = requestAnimationFrame { animate(it) }
+        technoPlayer.onTick = { rowIndex, time ->
+            lastTickTime = time
+            drawSequencer()
         }
+        animationId = requestAnimationFrame { animate() }
+    }
 
-        animationId = requestAnimationFrame { animate(it) }
+    private fun animate() {
+        drawSequencer()
+        animationId = requestAnimationFrame { animate() }
     }
 
     private fun stopAnimation() {
+        technoPlayer.onTick = null
         animationId?.let { cancelAnimationFrame(it) }
-    }
-
-    private fun playActiveNotes() {
-        val currentDivision = (rotation / (360.0 / MAX_DIVISIONS)).toInt()
-        rows.forEachIndexed { index, row ->
-            if (row.activeDivisions.contains(currentDivision % row.divisions)) {
-                when (row.instrument) {
-                    "Bass Drum" -> technoPlayer.audioState?.kickDrum?.play(technoPlayer.audioState?.currentTime() ?: 0.0)
-                    "Hi-Hat" -> technoPlayer.audioState?.hiHat?.play(technoPlayer.audioState?.currentTime() ?: 0.0)
-                    "Synth" -> technoPlayer.audioState?.synth?.play(technoPlayer.audioState?.currentTime() ?: 0.0, row.note, 3)
-                }
-            }
-        }
     }
 
     private fun drawSequencer() {
@@ -222,7 +189,7 @@ class Frooty {
         ctx.stroke()
 
         // Draw rows and divisions
-        rows.forEachIndexed { rowIndex, row ->
+        grid.rows.forEachIndexed { rowIndex, row ->
             val rowRadius = (radius / TOTAL_ROWS) * (rowIndex + 1)
             val isActive = rowIndex == activeRow
 
@@ -232,26 +199,25 @@ class Frooty {
             ctx.lineWidth = if (isActive) 2.0 else 1.0
             ctx.stroke()
 
-            if (row.divisions > 0) {
-                for (i in 0 until row.divisions) {
-                    val angle = (i.toDouble() / row.divisions) * 2 * PI
-                    val x1 = centerX + rowRadius * cos(angle)
-                    val y1 = centerY + rowRadius * sin(angle)
-                    val x2 = centerX + (rowRadius - radius / TOTAL_ROWS) * cos(angle)
-                    val y2 = centerY + (rowRadius - radius / TOTAL_ROWS) * sin(angle)
+            row.divisions.forEachIndexed { i, event ->
+                val angle = (i.toDouble() / row.divisions.size) * 2 * PI
+                val x1 = centerX + rowRadius * cos(angle)
+                val y1 = centerY + rowRadius * sin(angle)
+                val x2 = centerX + (rowRadius - radius / TOTAL_ROWS) * cos(angle)
+                val y2 = centerY + (rowRadius - radius / TOTAL_ROWS) * sin(angle)
 
-                    ctx.beginPath()
-                    ctx.moveTo(x1, y1)
-                    ctx.lineTo(x2, y2)
-                    ctx.strokeStyle = if (row.activeDivisions.contains(i)) "green" else "gray"
-                    ctx.lineWidth = 1.0
-                    ctx.stroke()
-                }
+                ctx.beginPath()
+                ctx.moveTo(x1, y1)
+                ctx.lineTo(x2, y2)
+                ctx.strokeStyle = if (event != null) "green" else "gray"
+                ctx.lineWidth = 1.0
+                ctx.stroke()
             }
         }
 
         // Draw playhead
-        val playheadAngle = rotation * PI / 180
+        val secondsPerRevolution = 60.0 / technoPlayer.bpm() * 4 // Assuming 4/4 time
+        val playheadAngle = (lastTickTime % secondsPerRevolution) / secondsPerRevolution * 2 * PI
         ctx.beginPath()
         ctx.moveTo(centerX, centerY)
         ctx.lineTo(centerX + radius * cos(playheadAngle), centerY + radius * sin(playheadAngle))
@@ -274,34 +240,64 @@ class Frooty {
         val clickedRow = ((distance / radius) * TOTAL_ROWS).toInt().coerceIn(0, TOTAL_ROWS - 1)
         activeRow = clickedRow
 
-        val division = ((angle + PI) / (2 * PI / rows[clickedRow].divisions)).toInt() % rows[clickedRow].divisions
+        val row = grid.rows[clickedRow]
+        val division = ((angle + PI) / (2 * PI / row.divisions.size)).toInt() % row.divisions.size
 
-        if (rows[clickedRow].activeDivisions.contains(division)) {
-            rows[clickedRow].activeDivisions.remove(division)
+        val newDivisions = row.divisions.toMutableList()
+        if (newDivisions[division] != null) {
+            newDivisions[division] = null
         } else {
-            rows[clickedRow].activeDivisions.add(division)
+            newDivisions[division] = GridEvent(48, 127, 3) // Default note, velocity, and octave
         }
 
+        grid = Grid(1, grid.rows.toMutableList().apply {
+            set(clickedRow, row.copy(divisions = newDivisions))
+        })
+
+        technoPlayer.updateGrid(grid)
         drawSequencer()
     }
 
     private fun handleDivisionChange(change: Int) {
         activeRow?.let { rowIndex ->
-            rows[rowIndex].divisions = (rows[rowIndex].divisions + change).coerceIn(0, MAX_DIVISIONS)
-            rows[rowIndex].activeDivisions.clear()
+            val row = grid.rows[rowIndex]
+            val newSize = (row.divisions.size + change).coerceIn(1, MAX_DIVISIONS)
+            val newDivisions = if (newSize > row.divisions.size) {
+                row.divisions + List(newSize - row.divisions.size) { null }
+            } else {
+                row.divisions.take(newSize)
+            }
+
+            grid = Grid(1, grid.rows.toMutableList().apply {
+                set(rowIndex, row.copy(divisions = newDivisions))
+            })
+
+            technoPlayer.updateGrid(grid)
             drawSequencer()
         }
     }
 
-    private fun handleInstrumentChange(instrument: String) {
+    private fun handleInstrumentChange(instrumentName: String) {
         activeRow?.let { rowIndex ->
-            rows[rowIndex].instrument = Instrument.from(instrument)
+            val newInstrument = InstrumentId.valueOf(instrumentName)
+            grid = Grid(1, grid.rows.toMutableList().apply {
+                set(rowIndex, this[rowIndex].copy(instrument = newInstrument))
+            })
+            technoPlayer.updateGrid(grid)
         }
     }
 
     private fun handleNoteChange(change: Int) {
         activeRow?.let { rowIndex ->
-            rows[rowIndex].note = (rows[rowIndex].note + change).coerceIn(0, 127)
+            val row = grid.rows[rowIndex]
+            val newDivisions = row.divisions.map { event ->
+                event?.let { it.copy(note = (it.note + change).coerceIn(0, 127)) } ?: event
+            }
+            grid = Grid(1, grid.rows.toMutableList().apply {
+                set(rowIndex, row.copy(divisions = newDivisions))
+            })
+            technoPlayer.updateGrid(grid)
+            drawSequencer()
         }
     }
 }

@@ -3,7 +3,9 @@ package org.example.audio.instrument
 import web.audio.*
 import kotlin.random.Random
 
-class HiHat(private val audioContext: AudioContext, private val analyser: AnalyserNode) {
+class HiHat(private val audioContext: AudioContext, analyser: AnalyserNode): Instrument {
+
+    private val scheduledEvents = ArrayDeque<Double>()
 
     private val hihatGain = audioContext.createGain().apply {
         gain.setValueAtTime(0F, audioContext.currentTime)
@@ -33,7 +35,6 @@ class HiHat(private val audioContext: AudioContext, private val analyser: Analys
     }
 
     fun play(time: Double) {
-        hihatGain.gain.cancelScheduledValues(time)
         hihatGain.gain.setValueAtTime(0F, time)
         hihatGain.gain.linearRampToValueAtTime(0.3F, time + 0.001) // Sharper attack
         hihatGain.gain.exponentialRampToValueAtTime(0.01F, time + 0.1) // Longer decay
@@ -47,6 +48,8 @@ class HiHat(private val audioContext: AudioContext, private val analyser: Analys
 
         // Add some variation to the hi-hat
         hihatFilter.frequency.setValueAtTime(10000F + Random.nextFloat() * 2000F, time)
+
+        scheduledEvents.addLast(time)
     }
 
     fun disconnect() {
@@ -54,4 +57,16 @@ class HiHat(private val audioContext: AudioContext, private val analyser: Analys
         hihatFilter.disconnect()
     }
 
+
+    override fun scheduledEventTimes(): List<Double> {
+        cleanupPastEvents()
+        return scheduledEvents
+    }
+
+    private fun cleanupPastEvents() {
+        val currentTime = this.audioContext.currentTime
+        while (scheduledEvents.isNotEmpty() && scheduledEvents.first() < currentTime) {
+            scheduledEvents.removeFirst()
+        }
+    }
 }

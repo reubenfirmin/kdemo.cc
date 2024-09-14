@@ -1,99 +1,102 @@
 package org.example.audio
 
-import kotlinx.browser.window
+import org.example.audio.grid.Grid
 import web.audio.AnalyserNode
-import kotlin.math.log10
-import kotlin.math.pow
+import web.timers.Interval
+import web.timers.clearInterval
+import web.timers.setInterval
 
 class TechnoPlayer {
 
     private var audioState: AudioState? = null
+    private var isPlaying = false
+    private var grid = Grid(1, listOf())
+    private var bpm = 120
+    private var clockInterval: Interval? = null
+    private val scheduleAheadTime = 0.1 // Look 100ms ahead
 
-    private var rhythmIntervalId: Int? = null
-    private var beatCount = 0
+    var onTick: ((Int, Double) -> Unit)? = null
 
-    private var tb303Cutoff = logToLinear(40)
-    private var tb303Delay = 23
-    private var activeGrid = 0
-    private var started = false
-
-    fun startTechno(): AnalyserNode {
-
-        if (started) {
-            return audioState!!.analyser
-        }
-
+    fun startTechno(newGrid: Grid): AnalyserNode {
         if (audioState == null) {
             audioState = AudioState()
         } else {
+            console.log("Resuming")
             audioState!!.resume()
         }
 
-        with (audioState!!) {
+        grid = newGrid
 
-            val interval = (60.0 / 130 * 1000 / 4).toInt() // 130bpm 16th notes...I think
-
-            val song = HitTheClub(kickDrum, hiHat, synth)
-
-            activeGrid++
-
-            started = true
-            // TODO is there a better clock? surely
-            rhythmIntervalId = window.setInterval({
-                // adjust these each tick just for state simplicity
-                synth.setDelayTime(this@TechnoPlayer.tb303Delay)
-                synth.setFilterCutoff(this@TechnoPlayer.tb303Cutoff)
-                song.grid(beatCount++, currentTime())
-            }, interval)
-            return analyser
+        grid.rows.forEach { row ->
+            row.lastScheduledTime = audioState!!.currentTime() + (scheduleAheadTime * 3)
+            row.lastIdx = row.divisions.size - 1
         }
+        isPlaying = true
+        startClock()
+        return audioState!!.analyser
     }
 
     fun stopTechno() {
-        if (audioState != null) {
-            audioState!!.disconnect()
+        audioState?.disconnect()
+        isPlaying = false
+        stopClock()
+    }
+
+    private fun startClock() {
+        stopClock() // Ensure any existing clock is stopped
+        clockInterval = setInterval({
+            if (isPlaying) {
+                scheduleNotes()
+            }
+        }, 25) // Check every 25ms
+    }
+
+    private fun stopClock() {
+        clockInterval?.let { interval ->
+            clearInterval(interval)
         }
-        started = false
-        rhythmIntervalId?.let { window.clearInterval(it) }
-        beatCount = 0
-
-        // We're not closing the AudioContext here to allow for quick restart
+        clockInterval = null
     }
 
-    fun isPlaying() = started
+    private fun scheduleNotes() {
+        val currentTime = audioState!!.currentTime()
+        val scheduleUntil = currentTime + scheduleAheadTime
 
-    /**
-     * Set cutoff - 0-1000 (mapped to 20-20000hz)
-     */
-    fun setCutoff(cutoff: Int) {
-        require(cutoff in 0..1000) {
-            "cutoff must be between 0 and 1000."
+        val secondsPerBeat = 60.0 / bpm
+        val secondsPerBar = secondsPerBeat * 4 // Assuming 4 beats per measure
+
+        grid.rows.forEachIndexed { rowIndex, row ->
+            val divisionsPerBar = row.divisions.size / grid.bars
+            val secondsPerDivision = secondsPerBar / divisionsPerBar
+
+            var nextTickTime = row.lastScheduledTime + secondsPerDivision
+
+            while (isPlaying && nextTickTime < scheduleUntil) {
+                val divisionIndex = (row.lastIdx + 1) % row.divisions.size
+
+                row.divisions[divisionIndex]?.let { event ->
+                    if (audioState!!.sequence(row.instrument, nextTickTime, event)) {
+                        console.log("$currentTime || ${row.instrument} $secondsPerDivision $divisionIndex $nextTickTime")
+                        onTick?.invoke(rowIndex, nextTickTime)
+                    }
+                }
+                row.lastScheduledTime = nextTickTime
+                row.lastIdx = divisionIndex
+
+                nextTickTime += secondsPerDivision
+            }
         }
-//        console.log(cutoff)
-        tb303Cutoff = linearToLog(cutoff).toInt()
     }
 
-    fun getCutoffDisplay() = logToLinear(tb303Cutoff)
+    fun isPlaying() = isPlaying
 
-    /**
-     * Set delay - 0 to 100
-     */
-    fun setDelay(delay: Int) {
-        tb303Delay = delay
-//        console.log(delay.toLong())
+    fun updateGrid(newGrid: Grid) {
+        grid = newGrid
     }
 
-    fun getDelayDisplay() = tb303Delay
-
-    private fun linearToLog(value: Int): Float {
-        val minFreq = 20f
-        val maxFreq = 20000f
-        return minFreq * 10.0.pow((value / 1000.0) * log10(maxFreq / minFreq)).toFloat()
+    fun updateBPM(newBpm: Int) {
+        bpm = newBpm
     }
 
-    private fun logToLinear(freq: Int): Int {
-        val minFreq = 20f
-        val maxFreq = 20000f
-        return ((log10(freq / minFreq) / log10(maxFreq / minFreq)) * 1000).toInt().coerceIn(0, 1000)
-    }
+    fun bpm() = bpm
 }
