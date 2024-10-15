@@ -3,7 +3,7 @@ package org.example.audio.instrument
 import web.audio.*
 import kotlin.random.Random
 
-class HiHat(private val audioContext: AudioContext, analyser: AnalyserNode): Instrument {
+class HiHat(private val audioContext: AudioContext, analyser: AnalyserNode): RhythmInstrument {
 
     private val scheduledEvents = ArrayDeque<Double>()
 
@@ -34,7 +34,7 @@ class HiHat(private val audioContext: AudioContext, analyser: AnalyserNode): Ins
         }
     }
 
-    fun play(time: Double) {
+    override fun play(time: Double, velocity: Double) {
         hihatGain.gain.setValueAtTime(0F, time)
         hihatGain.gain.linearRampToValueAtTime(0.3F, time + 0.001) // Sharper attack
         hihatGain.gain.exponentialRampToValueAtTime(0.01F, time + 0.1) // Longer decay
@@ -52,11 +52,10 @@ class HiHat(private val audioContext: AudioContext, analyser: AnalyserNode): Ins
         scheduledEvents.addLast(time)
     }
 
-    fun disconnect() {
+    override fun disconnect() {
         hihatGain.disconnect()
         hihatFilter.disconnect()
     }
-
 
     override fun scheduledEventTimes(): List<Double> {
         cleanupPastEvents()
@@ -68,5 +67,13 @@ class HiHat(private val audioContext: AudioContext, analyser: AnalyserNode): Ins
         while (scheduledEvents.isNotEmpty() && scheduledEvents.first() < currentTime) {
             scheduledEvents.removeFirst()
         }
+    }
+
+    override fun availableParameters(): List<AvailableParameter> {
+        TODO("Not yet implemented")
+    }
+
+    override fun setParameterValue(parameter: Parameter, value: Double) {
+        TODO("Not yet implemented")
     }
 }

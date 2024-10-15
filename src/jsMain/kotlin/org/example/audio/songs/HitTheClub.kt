@@ -1,5 +1,6 @@
-package org.example.audio
+package org.example.audio.songs
 
+import org.example.audio.Note.*
 import org.example.audio.grid.Grid
 import org.example.audio.grid.GridEvent
 import org.example.audio.grid.GridRow
@@ -22,7 +23,7 @@ object HitTheClub {
                 false, false, true, false,
                 false, false, true, false)
 
-        val basslineNotes = listOf(45, 45, 45, 45, 45, 45, 50, 45)
+        val basslineNotes = listOf(Cs, Cs, Cs, Cs, Cs, Cs, As, Cs)
 
         val basslinePattern = listOf(
                 true, false, true, false,
@@ -32,18 +33,18 @@ object HitTheClub {
 
         val kickRow = GridRow(
             instrument = InstrumentId.BASSDRUM,
-            divisions = kickPattern.map { if (it) GridEvent(60, 127, 3) else null }
+            divisions = kickPattern.map { if (it) GridEvent(C, 1.0, 3) else null }
         )
 
         val hiHatRow = GridRow(
             instrument = InstrumentId.HIHAT,
-            divisions = hiHatPattern.map { if (it) GridEvent(60, 127, 3) else null }
+            divisions = hiHatPattern.map { if (it) GridEvent(C, 1.0, 3) else null }
         )
 
         val bassRow = GridRow(
             instrument = InstrumentId.SYNTH,
             divisions = basslinePattern.mapIndexed { index, active ->
-                if (active) GridEvent(basslineNotes[index % basslineNotes.size], 127, 3) else null
+                if (active) GridEvent(basslineNotes[index % basslineNotes.size], 1.0, 1) else null
             }
         )
 

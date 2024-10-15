@@ -1,6 +1,7 @@
 package org.example.audio.instrument
 
 import js.typedarrays.Float32Array
+import org.example.audio.Note
 import web.audio.*
 import kotlin.math.abs
 import kotlin.math.pow
@@ -12,7 +13,7 @@ import kotlin.math.pow
  *                  |                                                            |___________________|
  * [osc2] [osc1Mix] /
  */
-class Synth(private val audioContext: AudioContext, analyser: AnalyserNode): Instrument {
+class Synth(private val audioContext: AudioContext, analyser: AnalyserNode): TonalInstrument {
 
     private val scheduledEvents = ArrayDeque<Double>()
 
@@ -63,16 +64,16 @@ class Synth(private val audioContext: AudioContext, analyser: AnalyserNode): Ins
         Q.value = 18f
     }
 
-    private val delay1: DelayNode = audioContext.createDelay().apply {
-        delayTime.value = 0.3f
+    private val delay1: DelayNode = audioContext.createDelay(1.0).apply {
+        delayTime.value = 0.0f
     }
 
-    private val delay2: DelayNode = audioContext.createDelay().apply {
-        delayTime.value = 0.3f
+    private val delay2: DelayNode = audioContext.createDelay(1.0).apply {
+        delayTime.value = 0.0f
     }
 
     private val delayFeedback: GainNode = audioContext.createGain().apply {
-        gain.value = 0.4f
+        gain.value = 0.3f
     }
 
     private val output: GainNode = audioContext.createGain().apply {
@@ -93,19 +94,35 @@ class Synth(private val audioContext: AudioContext, analyser: AnalyserNode): Ins
         // could mix wet/dry here
         filter.connect(output)
 
-//        delay1.connect(delay2)
+        delay1.connect(output)
+        delay1.connect(delayFeedback)
         // could mix wet/dry here
 //        delay2.connect(delayFeedback)
 //        delay2.connect(output)
-//        delayFeedback.connect(delay1)
+        delayFeedback.connect(delay1)
 
         output.connect(audioContext.destination)
         output.connect(analyser)
     }
 
-    // TODO velocity
-    fun play(time: Double, note: Int, octave: Int) {
-        val frequency = 440 * 2.0.pow((note - 69 + (octave - 4) * 12) / 12.0)
+    override fun availableParameters() = listOf(
+        AvailableParameter("Cutoff", Parameter.A),
+        AvailableParameter("Delay Time", Parameter.B)
+    )
+
+    override fun setParameterValue(parameter: Parameter, value: Double) {
+        when (parameter) {
+            Parameter.A -> setFilterCutoff(parameterValueInRange(value, 20.0, 20000.0, Slope.EASE_IN).toInt())
+            Parameter.B -> setDelayTime(parameterValueInRange(value, 0.0, 1000.0, Slope.EASE_OUT).toInt())
+            else -> {
+                throw Exception("Parameter $parameter not supported")
+            }
+        }
+    }
+
+    // TODO wire up velocity
+    override fun play(time: Double, note: Note, octave: Int, velocity: Double) {
+        val frequency = frequency(note, octave)
 
         oscillator1.frequency.setValueAtTime(frequency.toFloat(), time)
         // detune
@@ -129,6 +146,7 @@ class Synth(private val audioContext: AudioContext, analyser: AnalyserNode): Ins
     }
 
     fun setFilterCutoff(frequency: Int) {
+//        console.log(frequency)
         val safeFrequency = frequency.coerceIn(20, 20000)
         filter.frequency.value = safeFrequency.toFloat()
 
@@ -138,12 +156,14 @@ class Synth(private val audioContext: AudioContext, analyser: AnalyserNode): Ins
         )
     }
 
-    fun setDelayTime(delayPercent: Int) {
-        delay1.delayTime.value = (delayPercent / 100.0).toFloat()
-        delay2.delayTime.value = (delayPercent / 100.0).toFloat()
+    fun setDelayTime(delayMs: Int) {
+        val converted = delayMs.toFloat() / 1000.0F
+        console.log(converted)
+        delay1.delayTime.value = converted
+        delay2.delayTime.value = converted
     }
 
-    fun disconnect() {
+    override fun disconnect() {
         oscillator1.disconnect()
         oscillator2.disconnect()
         prefilterGain.disconnect()

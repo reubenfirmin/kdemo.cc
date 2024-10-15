@@ -1,27 +1,30 @@
 package org.example.audio
 
 import org.example.audio.grid.Grid
+import org.example.audio.instrument.InstrumentId
+import org.example.audio.instrument.Parameter
 import web.audio.AnalyserNode
 import web.timers.Interval
 import web.timers.clearInterval
 import web.timers.setInterval
 
-class TechnoPlayer {
+class Sequencer {
 
     private var audioState: AudioState? = null
     private var isPlaying = false
     private var grid = Grid(1, listOf())
+    // TODO allow tweaking this
     private var bpm = 120
     private var clockInterval: Interval? = null
     private val scheduleAheadTime = 0.1 // Look 100ms ahead
 
     var onTick: ((Int, Double) -> Unit)? = null
 
-    fun startTechno(newGrid: Grid): AnalyserNode {
+    fun start(newGrid: Grid): AnalyserNode {
         if (audioState == null) {
+            // delay initializing until the user requests playback
             audioState = AudioState()
         } else {
-            console.log("Resuming")
             audioState!!.resume()
         }
 
@@ -36,10 +39,14 @@ class TechnoPlayer {
         return audioState!!.analyser
     }
 
-    fun stopTechno() {
+    fun stop() {
         audioState?.disconnect()
         isPlaying = false
         stopClock()
+    }
+
+    fun setParameter(instrumentId: InstrumentId, parameter: Parameter, value: Double) {
+        audioState!!.setParameter(instrumentId, parameter, value)
     }
 
     private fun startClock() {
@@ -76,7 +83,7 @@ class TechnoPlayer {
 
                 row.divisions[divisionIndex]?.let { event ->
                     if (audioState!!.sequence(row.instrument, nextTickTime, event)) {
-                        console.log("$currentTime || ${row.instrument} $secondsPerDivision $divisionIndex $nextTickTime")
+                        //console.log("$currentTime || ${row.instrument} $secondsPerDivision $divisionIndex $nextTickTime")
                         onTick?.invoke(rowIndex, nextTickTime)
                     }
                 }

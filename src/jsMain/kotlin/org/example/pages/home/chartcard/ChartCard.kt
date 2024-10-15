@@ -1,19 +1,22 @@
 package org.example.pages.home.chartcard
 
 import kotlinx.html.*
-import org.example.audio.HitTheClub
-import org.example.audio.TechnoPlayer
+import org.example.audio.songs.HitTheClub
+import org.example.audio.Sequencer
+import org.example.audio.instrument.InstrumentId
+import org.example.audio.instrument.Parameter
 import org.example.framework.dom.onMouseEnter
 import org.example.framework.dom.onMouseLeave
 import org.example.pages.home.components.card
 import web.dom.document
 import org.example.framework.dom.onClick
 import org.example.framework.dom.onInput
+import web.html.HTMLInputElement
 
 class ChartCard {
 
     private val barCharts = BarCharts()
-    private val technoPlayer = TechnoPlayer()
+    private val sequencer = Sequencer()
     private val grid = HitTheClub.createGrid()
 
     fun FlowContent.render() {
@@ -31,8 +34,8 @@ class ChartCard {
                     onClick { event ->
                         event.preventDefault()
                         document.getElementById(this@div.id)!!.remove()
-                        if (!technoPlayer.isPlaying()) {
-                            val analyser = technoPlayer.startTechno(grid)
+                        if (!sequencer.isPlaying()) {
+                            val analyser = sequencer.start(grid)
                             barCharts.startAnimation(analyser)
                         }
                     }
@@ -47,17 +50,17 @@ class ChartCard {
                 renderBars()
             }
 
-            sliders(technoPlayer)
+            sliders(sequencer)
 
             onMouseEnter { _ ->
-                if (document.getElementById("overlay") == null && !technoPlayer.isPlaying()) {
-                    val analyser = technoPlayer.startTechno(grid)
+                if (document.getElementById("overlay") == null && !sequencer.isPlaying()) {
+                    val analyser = sequencer.start(grid)
                     barCharts.startAnimation(analyser)
                 }
             }
 
             onMouseLeave { _ ->
-                technoPlayer.stopTechno()
+                sequencer.stop()
                 barCharts.stopAnimation()
             }
         }
@@ -65,9 +68,11 @@ class ChartCard {
 
 }
 
-fun FlowContent.sliders(technoPlayer: TechnoPlayer) {
+fun FlowContent.sliders(sequencer: Sequencer) {
     // TB-303 Control Sliders
     div("mt-4") {
+        // TODO genericize based on options offered by the sequencer
+
         // Cutoff Frequency Slider
         div("mb-2") {
             label("block text-sm font-medium text-gray-300") {
@@ -76,12 +81,11 @@ fun FlowContent.sliders(technoPlayer: TechnoPlayer) {
             input(type = InputType.range, classes = "w-full") {
                 id = "cutoff"
                 min = "0"
-                max = "1000"
-                // TODO
-                value = "10"//technoPlayer.getCutoffDisplay().toString()
-                step = "1"
+                max = "1"
+                value = "0.3" // TODO init from sequencer
+                step = "0.001"
                 onInput { event ->
-                    //technoPlayer.setCutoff((event.target as HTMLInputElement).value.toInt())
+                    sequencer.setParameter(InstrumentId.SYNTH, Parameter.A, (event.target as HTMLInputElement).value.toDouble())
                 }
             }
         }
@@ -93,13 +97,12 @@ fun FlowContent.sliders(technoPlayer: TechnoPlayer) {
             }
             input(type = InputType.range, classes = "w-full") {
                 id = "delay"
-                min = "1"
-                max = "100"
-                // TODO
-                value = "10"//technoPlayer.getDelayDisplay().toString()
-                step = "1"
+                min = "0"
+                max = "1"
+                value = "0.1" // TODO init from sequencer
+                step = "0.001"
                 onInput { event ->
-                    //technoPlayer.setDelay((event.target as HTMLInputElement).value.toInt())
+                    sequencer.setParameter(InstrumentId.SYNTH, Parameter.B, (event.target as HTMLInputElement).value.toDouble())
                 }
             }
         }

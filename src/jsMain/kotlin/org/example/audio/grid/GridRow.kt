@@ -1,5 +1,6 @@
 package org.example.audio.grid
 
+import org.example.audio.Note
 import org.example.audio.instrument.InstrumentId
 
 data class GridRow(
@@ -10,7 +11,7 @@ data class GridRow(
 )
 
 data class GridEvent(
-    val note: Int,
-    val velocity: Int,
+    val note: Note,
+    val velocity: Double,
     val octave: Int
 )

@@ -4,7 +4,8 @@ import web.audio.AnalyserNode
 import web.audio.AudioContext
 import web.audio.OscillatorType
 
-class KickDrum(val audioContext: AudioContext, analyser: AnalyserNode): Instrument {
+// TODO export frequency params
+class KickDrum(private val audioContext: AudioContext, analyser: AnalyserNode): RhythmInstrument {
 
     private val scheduledEvents = ArrayDeque<Double>()
 
@@ -23,7 +24,7 @@ class KickDrum(val audioContext: AudioContext, analyser: AnalyserNode): Instrume
         kickGain.connect(analyser)
     }
 
-    fun play(time: Double) {
+    override fun play(time: Double, velocity: Double) {
         kickOscillator.frequency.setValueAtTime(150f, time)
         kickOscillator.frequency.exponentialRampToValueAtTime(30f, time + 0.05)
 
@@ -34,7 +35,7 @@ class KickDrum(val audioContext: AudioContext, analyser: AnalyserNode): Instrume
         scheduledEvents.addLast(time)
     }
 
-    fun disconnect() {
+    override fun disconnect() {
         kickOscillator.disconnect()
         kickGain.disconnect()
         kickOscillator.stop()
@@ -50,5 +51,13 @@ class KickDrum(val audioContext: AudioContext, analyser: AnalyserNode): Instrume
         while (scheduledEvents.isNotEmpty() && scheduledEvents.first() < currentTime) {
             scheduledEvents.removeFirst()
         }
+    }
+
+    override fun availableParameters(): List<AvailableParameter> {
+        TODO("Not yet implemented")
+    }
+
+    override fun setParameterValue(parameter: Parameter, value: Double) {
+        TODO("Not yet implemented")
     }
 }

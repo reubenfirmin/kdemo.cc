@@ -1,7 +1,8 @@
 package org.example.pages.frooty
 
 import kotlinx.html.*
-import org.example.audio.TechnoPlayer
+import org.example.audio.Note
+import org.example.audio.Sequencer
 import org.example.audio.instrument.InstrumentId
 import org.example.audio.grid.Grid
 import org.example.audio.grid.GridRow
@@ -29,7 +30,7 @@ class Frooty {
     private lateinit var canvas: HTMLCanvasElement
     private var animationId: FrameRequestId? = null
 
-    private val technoPlayer = TechnoPlayer()
+    private val technoPlayer = Sequencer()
 
     private var lastTickTime = 0.0
 
@@ -146,10 +147,10 @@ class Frooty {
 
     private fun togglePlay() {
         if (technoPlayer.isPlaying()) {
-            technoPlayer.stopTechno()
+            technoPlayer.stop()
             stopAnimation()
         } else {
-            technoPlayer.startTechno(grid)
+            technoPlayer.start(grid)
             startAnimation()
         }
     }
@@ -247,7 +248,7 @@ class Frooty {
         if (newDivisions[division] != null) {
             newDivisions[division] = null
         } else {
-            newDivisions[division] = GridEvent(48, 127, 3) // Default note, velocity, and octave
+            newDivisions[division] = GridEvent(Note.C, 1.0, 3)
         }
 
         grid = Grid(1, grid.rows.toMutableList().apply {
@@ -290,9 +291,7 @@ class Frooty {
     private fun handleNoteChange(change: Int) {
         activeRow?.let { rowIndex ->
             val row = grid.rows[rowIndex]
-            val newDivisions = row.divisions.map { event ->
-                event?.let { it.copy(note = (it.note + change).coerceIn(0, 127)) } ?: event
-            }
+            val newDivisions = row.divisions // TODO unclear what this was attempting
             grid = Grid(1, grid.rows.toMutableList().apply {
                 set(rowIndex, row.copy(divisions = newDivisions))
             })
