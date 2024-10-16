@@ -2,8 +2,8 @@
 @file:JsNonModule
 package org.example.framework.libs
 
-import org.w3c.dom.DOMRect
 import web.dom.Element
+import web.geometry.DOMRect
 
 
 @JsName("default")

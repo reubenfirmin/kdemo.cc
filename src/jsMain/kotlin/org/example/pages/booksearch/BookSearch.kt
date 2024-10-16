@@ -1,7 +1,6 @@
 package org.example.pages.booksearch
 
 import kotlinx.html.*
-import kotlinx.html.js.onSubmitFunction
 import org.example.framework.dom.onClick
 import org.example.framework.dom.onSubmit
 import org.example.framework.interop.appendTo

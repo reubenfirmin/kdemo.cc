@@ -7,10 +7,11 @@ import org.w3c.fetch.RequestInit
 import org.w3c.fetch.Headers
 import kotlinx.browser.window
 
-// potentially move to framework package and extract
+// once better tested, move to framework package
 class HttpClient(private val baseUrl: String) {
     private val json = Json { ignoreUnknownKeys = true }
 
+    // TODO maybe convert to kotlin.web wrapper. however, that uses coroutines, which maybe worth avoiding
     private fun <T> request(
         method: String,
         endpoint: String,
@@ -22,7 +23,6 @@ class HttpClient(private val baseUrl: String) {
         val requestInit = RequestInit().apply {
             this.method = method
             this.headers = Headers().apply {
-                // Only add Content-Type for requests with a body
                 if (body != null) {
                     append("Content-Type", "application/json")
                 }

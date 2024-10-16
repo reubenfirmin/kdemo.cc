@@ -1,12 +1,15 @@
 package org.example.pages.oscilloscope
 import kotlinx.html.*
-import kotlinx.browser.document
-import kotlinx.browser.window
-import org.w3c.dom.CanvasRenderingContext2D
-import org.w3c.dom.HTMLCanvasElement
-import org.w3c.dom.HTMLInputElement
-import org.w3c.dom.HTMLElement
 import org.example.framework.dom.onClick
+import web.animations.requestAnimationFrame
+import web.canvas.CanvasRenderingContext2D
+import web.dom.document
+import web.events.EventHandler
+import web.events.EventType
+import web.html.HTMLCanvasElement
+import web.html.HTMLElement
+import web.html.HTMLInputElement
+import web.window.window
 import kotlin.math.*
 
 class Oscilloscope {
@@ -78,7 +81,7 @@ class Oscilloscope {
 
     private fun initOscilloscope() {
         val canvas = document.getElementById("oscilloscope") as HTMLCanvasElement
-        canvasContext = canvas.getContext("2d") as CanvasRenderingContext2D
+        canvasContext = canvas.getContext(CanvasRenderingContext2D.ID)
 
         // Set canvas size
         updateCanvasSize()
@@ -92,20 +95,19 @@ class Oscilloscope {
 
         val rangeSlider = document.getElementById("rangeSlider") as HTMLInputElement
         val rangeValueDisplay = document.getElementById("rangeValue") as HTMLElement
-        // TODO add event handler for this
-        rangeSlider.addEventListener("input", {
+
+        rangeSlider.oninput = EventHandler {
             xRange = rangeSlider.value.toDouble()
             rangeValueDisplay.textContent = xRange.toString()
             draw()
-        })
+        }
 
-        // Handle window resize
-        window.addEventListener("resize", {
+        window.onresize = EventHandler {
             updateCanvasSize()
             draw()
-        })
+        }
 
-        window.requestAnimationFrame { draw() }
+        requestAnimationFrame { draw() }
     }
 
     private fun updateCanvasSize() {
