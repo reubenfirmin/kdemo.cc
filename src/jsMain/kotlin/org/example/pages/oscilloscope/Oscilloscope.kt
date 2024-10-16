@@ -5,7 +5,6 @@ import web.animations.requestAnimationFrame
 import web.canvas.CanvasRenderingContext2D
 import web.dom.document
 import web.events.EventHandler
-import web.events.EventType
 import web.html.HTMLCanvasElement
 import web.html.HTMLElement
 import web.html.HTMLInputElement
@@ -75,7 +74,7 @@ class Oscilloscope {
                 }
             }
         }
-
+        // TODO seems unsafe to run this immediately and yet it works. why
         initOscilloscope()
     }
 
