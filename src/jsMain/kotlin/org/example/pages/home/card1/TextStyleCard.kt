@@ -12,7 +12,7 @@ import web.html.HTMLElement
 fun FlowContent.textStyleCard() {
     card {
         h2("text-xl font-semibold mb-4 text-gray-100") {
-            +"Text Styling Demo"
+            +"Tailwind Styling Demo"
         }
         p("transition-all duration-500 ease-in-out cursor-pointer text-blue-400 transform origin-center text-xl") {
             id = "text_demo"
