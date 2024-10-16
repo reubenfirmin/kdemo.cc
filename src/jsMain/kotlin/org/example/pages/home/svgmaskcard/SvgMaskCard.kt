@@ -1,4 +1,4 @@
-package org.example.pages.home.card2
+package org.example.pages.home.svgmaskcard
 
 import kotlinx.browser.window
 import kotlinx.html.*
@@ -10,7 +10,7 @@ import web.dom.Element
 import web.dom.document
 import web.html.HTMLElement
 
-fun FlowContent.buttonClickCard() {
+fun FlowContent.svgMaskCard() {
     card("min-h-64 bg-gray-800 rounded-lg shadow-md p-6") {
         val cardId = "button_demo_card"
         id = cardId

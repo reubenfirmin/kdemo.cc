@@ -1,6 +1,7 @@
 package org.example.pages.oscilloscope
 import kotlinx.html.*
 import org.example.framework.dom.onClick
+import org.example.framework.dom.onMount
 import web.animations.requestAnimationFrame
 import web.canvas.CanvasRenderingContext2D
 import web.dom.document
@@ -21,6 +22,7 @@ class Oscilloscope {
 
     fun TagConsumer<*>.oscilloscopeDemo() {
         div("w-full h-screen flex flex-col") {
+            id = "the_scope"
             canvas {
                 id = "oscilloscope"
                 style = "width: 100%; background-color: black;"
@@ -73,9 +75,10 @@ class Oscilloscope {
                     }
                 }
             }
+            onMount {
+                initOscilloscope()
+            }
         }
-        // TODO seems unsafe to run this immediately and yet it works. why
-        initOscilloscope()
     }
 
     private fun initOscilloscope() {

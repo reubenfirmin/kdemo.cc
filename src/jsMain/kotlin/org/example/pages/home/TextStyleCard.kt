@@ -1,4 +1,4 @@
-package org.example.pages.home.card1
+package org.example.pages.home
 
 import kotlinx.html.FlowContent
 import kotlinx.html.h2

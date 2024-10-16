@@ -36,7 +36,7 @@ private inline fun <reified E : Event> CommonAttributeGroupFacade.attachEvent(
 }
 
 // Standard event listeners
-// XXX these all require that id is defined on the attribute first; the logic above that tries to generate an id isn't working
+// XXX these all require that id is defined on the element first; the logic above that tries to generate an id isn't working
 fun CommonAttributeGroupFacade.onClick(handler: (MouseEvent) -> Unit) = attachEvent<MouseEvent>(EventType("click"), handler)
 fun CommonAttributeGroupFacade.onMouseEnter(handler: (MouseEvent) -> Unit) = attachEvent<MouseEvent>(EventType("mouseenter"), handler)
 fun CommonAttributeGroupFacade.onMouseLeave(handler: (MouseEvent) -> Unit) = attachEvent<MouseEvent>(EventType("mouseleave"), handler)

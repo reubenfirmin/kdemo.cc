@@ -1,10 +1,9 @@
 package org.example.pages.home
 
 import kotlinx.html.*
-import org.example.pages.home.card1.textStyleCard
-import org.example.pages.home.card2.animatedBackground
-import org.example.pages.home.card2.buttonClickCard
-import org.example.pages.home.card2.maskedBackgroundLayer
+import org.example.pages.home.svgmaskcard.animatedBackground
+import org.example.pages.home.svgmaskcard.svgMaskCard
+import org.example.pages.home.svgmaskcard.maskedBackgroundLayer
 import org.example.pages.home.chartcard.chartCard
 
 class Index {
@@ -50,7 +49,7 @@ class Index {
                     div("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6") {
 
                         textStyleCard()
-                        buttonClickCard()
+                        svgMaskCard()
                         sourceCard()
                         blogDemoCard()
                         chartCard()

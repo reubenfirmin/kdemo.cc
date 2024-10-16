@@ -1,4 +1,4 @@
-package org.example.pages.home.card2
+package org.example.pages.home.svgmaskcard
 
 import kotlinx.html.FlowContent
 import kotlinx.html.div
