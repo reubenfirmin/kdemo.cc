@@ -8,10 +8,11 @@ import org.example.framework.interop.clear
 import web.dom.document
 import kotlin.js.Promise
 
+// TODO this is primitive. doesn't allow for templated paths or parameters yet.
 object Router {
     private val routes = mutableMapOf<String, TagConsumer<*>.() -> Any>()
 
-    fun route(path: String, handler: TagConsumer<*>.() -> Any): Router {
+    fun addRoute(path: String, handler: TagConsumer<*>.() -> Any): Router {
         routes[path] = handler
         return this
     }
@@ -56,4 +57,29 @@ object Router {
 
         handleRoute()
     }
+}
+
+/**
+ * ```
+ * with (MyClass()) {
+ *     route("{path}") { it.renderFunc() }
+ * }
+ * ```
+ */
+inline fun <reified T : Any> T.route(path: String, crossinline block: T.(TagConsumer<*>) -> Unit) {
+    Router.addRoute(path) {
+        block(this@route, this)
+    }
+}
+
+/**
+ * ```
+ * route (MyClass()) {
+ *     "{path}" to { renderFunc() }
+ * }
+ * ```
+ */
+fun <T : Any> route(instance: T, block: T.() -> Pair<String, TagConsumer<*>.() -> Any>) {
+    val (path, handler) = instance.block()
+    Router.addRoute(path, handler)
 }

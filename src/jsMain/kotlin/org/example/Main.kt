@@ -1,6 +1,7 @@
 package org.example
 
 import org.example.framework.Router
+import org.example.framework.route
 import org.example.pages.blog.BlogIndex
 import org.example.pages.booksearch.BookSearch
 import org.example.pages.home.Index
@@ -8,31 +9,27 @@ import org.example.pages.kanban.Kanban
 import org.example.pages.oscilloscope.Oscilloscope
 
 fun main() {
-    val index = Index()
-    val blogIndex = BlogIndex()
-    val bookSearch = BookSearch()
-    val oscilloscope = Oscilloscope()
-    val kanban = Kanban()
 
-    Router.route("/") {
-        with (index) {
-            home()
-        }
-    }.route("/blog") {
-        with(blogIndex) {
-            blogIndex()
-        }
-    }.route("/book-search") {
-        with(bookSearch) {
-            render()
-        }
-    }.route("/scope") {
-        with(oscilloscope) {
-            oscilloscopeDemo()
-        }
-    }.route("/kanban") {
-        with(kanban) {
-            kanbanBoard()
-        }
-    }.start()
+    route(Index()) {
+        "/" to { home() }
+    }
+
+    route(BlogIndex()) {
+        "/blog" to { blogIndex() }
+    }
+
+    route(BookSearch()) {
+        "/book-search" to { render() }
+    }
+
+    route(Oscilloscope()) {
+        "/scope" to { oscilloscopeDemo() }
+    }
+
+    route(Kanban()) {
+        "/kanban" to { kanbanBoard() }
+    }
+
+    Router.start()
 }
+
