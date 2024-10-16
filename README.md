@@ -1,6 +1,6 @@
 # Kotlin.js + Tailwind + Kotlinx.html demos
 
-This is a set of frontend experiments using Kotlin.js, Tailwind and Kotlinx.html. Typesafe UIs with a convenient DSL, and a better IDE experience - what's not to love? (This also uses kotlin-browser, a new-i sh library that provides an update to the older org.w3c.dom classes provided in kotlin.js.)
+This is a set of frontend experiments using Kotlin.js, Tailwind and Kotlinx.html. Typesafe UIs with a convenient DSL, and a better IDE experience - what's not to love? (This also uses kotlin-browser, a new-ish library that provides an update to the older org.w3c.dom classes provided in kotlin.js, and kotlin-css, a typesafe css builder.)
 
 Status: weekend code, not yet used in production.
 
@@ -54,25 +54,33 @@ Showcases applying tailwind styles.
 
 Example of using SVG, combined with tailwind animations.
 
-### 3) Chart Demo
+### 3) Source Code 
+
+Card links to github.
+
+### 4) Blog
+
+Demonstrates the event handlers built in this project.
+
+### 5) Chart Demo
 
 SVG charting + web audio API.
 
-## Blog
-
-Rudimentary demo right now - just showcases events.
-
-## Book Search
+### 6) Book Search
 
 Simple ecommerce layout. Implements simple axios-like http client which is used to interact with an API.
 
-## Scope
+### 7) Kanban
+
+Demonstrates integrating an npm library (in this case sortable.js).
+
+### 8) Scope
 
 Full screen charting using Canvas.
 
-## Kanban
+### 9) Inline CSS
 
-Demonstrates integrating an npm library (in this case sortable.js).
+Demonstrates using kotlin-css as part of the kotlinx-html dsl. (Note - have not yet figured out a way to associate classes! Working on it.)
 
 # Worth Checking Out
 
@@ -88,3 +96,7 @@ Router.kt implements a very simple router. Any navigation is intercepted, and th
 ## Calling APIs
 
 The booksearch demo implements a simple HttpClient - just a wrapper around fetch with some convenience. BookApi demonstrates deserializing responses.
+
+## CSS
+
+Demo #9 above demonstrates the inline css dsl.
