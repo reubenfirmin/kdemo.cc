@@ -19,7 +19,15 @@ private fun generateRandomString(length: Int = 7): String {
 }
 
 private fun CommonAttributeGroupFacade.ensureId(): String {
-    if (id.isBlank()) {
+
+    try {
+        // just accessing id if it's unset currently throws an exception
+        if (id.isBlank()) {
+            console.log("id was blank; generating")
+            // just in case kotlinx.html fixes ^ in future
+            throw RuntimeException("id was blank")
+        }
+    } catch (e: Exception) {
         id = "element-${generateRandomString()}"
     }
     return id
@@ -62,6 +70,7 @@ fun CommonAttributeGroupFacade.onDisplay(handler: () -> Unit) {
  * Executed when element is added to dom
  */
 fun CommonAttributeGroupFacade.onMount(handler: () -> Unit) {
+    console.log("Checking for id")
     val id = ensureId()
     DomBehavior.queueMount(id, handler)
 }
