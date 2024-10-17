@@ -15,12 +15,11 @@ fun FlowContent.svgMaskCard() {
         val cardId = "button_demo_card"
         id = cardId
         h2("text-xl font-semibold mb-4 text-gray-100") {
-            +"Button Demo"
+            +"Image Masking"
         }
 
         p("pb-16") {
-            +"""When you click on the button, you'll reveal an animated layer. The animation is constantly running in the bottom layer on this dashboard; in front of it is an svg. Clicking the button
-                cuts a hole in the svg matching the dimensions and position of this card, allowing you to see what's underneath.""".trimIndent()
+            +"Click the button to cut a hole in the background and view the animation at the bottom layer in the DOM."
         }
 
         onMount {
