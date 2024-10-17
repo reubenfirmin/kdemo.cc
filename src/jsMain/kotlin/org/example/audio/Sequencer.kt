@@ -14,7 +14,7 @@ class Sequencer {
     private var isPlaying = false
     private var grid = Grid(1, listOf())
     // TODO allow tweaking this
-    private var bpm = 120
+    private var bpm = 130
     private var clockInterval: Interval? = null
     private val scheduleAheadTime = 0.1 // Look 100ms ahead
 

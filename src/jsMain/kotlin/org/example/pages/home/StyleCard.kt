@@ -59,7 +59,12 @@ fun FlowContent.styleCard() {
                     }
                     boxShadow += BoxShadow(rgb(0, 0, 0, 0.2), 0.px, 10.px, 15.px)
                 }
-                +"This card is styled with inline css!"
+                p {
+                    +"To achieve style, begin by"
+                }
+                p {
+                    +"affecting none."
+                }
             }
         }
     }

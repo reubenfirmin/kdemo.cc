@@ -49,7 +49,9 @@ kotlin {
             dependencies {
                 implementation(project.dependencies.platform("org.jetbrains.kotlin-wrappers:kotlin-wrappers-bom:$kotlinWrappers"))
                 implementation("org.jetbrains.kotlin-wrappers:kotlin-js")
-                implementation("org.jetbrains.kotlin-wrappers:kotlin-browser")
+                implementation("org.jetbrains.kotlin-wrappers:kotlin-browser") {
+                    exclude("org.jetbrains.kotlin-wrappers", "kotlin-cssom")
+                }
                 implementation("org.jetbrains.kotlin-wrappers:kotlin-css")
 
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")

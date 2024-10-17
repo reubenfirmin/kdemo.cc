@@ -81,11 +81,11 @@ fun FlowContent.sliders(sequencer: Sequencer) {
             input(type = InputType.range, classes = "w-full") {
                 id = "cutoff"
                 min = "0"
-                max = "1"
-                value = "0.3" // TODO init from sequencer
-                step = "0.001"
+                max = "1000"
+                value = "100" // TODO init from sequencer
+                step = "1"
                 onInput { event ->
-                    sequencer.setParameter(InstrumentId.SYNTH, Parameter.A, (event.target as HTMLInputElement).value.toDouble())
+                    sequencer.setParameter(InstrumentId.SYNTH, Parameter.A, (event.target as HTMLInputElement).value.toDouble() / 1000)
                 }
             }
         }
@@ -98,9 +98,9 @@ fun FlowContent.sliders(sequencer: Sequencer) {
             input(type = InputType.range, classes = "w-full") {
                 id = "delay"
                 min = "0"
-                max = "1"
-                value = "0.1" // TODO init from sequencer
-                step = "0.001"
+                max = "1000"
+                value = "0" // TODO init from sequencer
+                step = "1"
                 onInput { event ->
                     sequencer.setParameter(InstrumentId.SYNTH, Parameter.B, (event.target as HTMLInputElement).value.toDouble())
                 }

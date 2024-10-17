@@ -60,8 +60,8 @@ class Synth(private val audioContext: AudioContext, analyser: AnalyserNode): Ton
 
     private val filter: BiquadFilterNode = audioContext.createBiquadFilter().apply {
         type = BiquadFilterType.lowpass
-        frequency.value = 1000f
-        Q.value = 18f
+        frequency.value = 300f
+        Q.value = 8f
     }
 
     private val delay1: DelayNode = audioContext.createDelay(1.0).apply {

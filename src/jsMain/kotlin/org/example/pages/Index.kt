@@ -54,10 +54,10 @@ class Index {
                         sourceCard()
                         blogDemoCard()
                         chartCard()
+                        styleCard()
                         bookSearchCard()
                         kanbanDemoCard()
                         scopeDemoCard()
-                        styleCard()
                         speechSynthesisCard()
                     }
                 }

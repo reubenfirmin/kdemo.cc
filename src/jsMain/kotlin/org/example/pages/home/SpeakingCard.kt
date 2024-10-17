@@ -9,6 +9,7 @@ import web.speech.SpeechSynthesisVoice
 import web.speech.speechSynthesis
 import web.timers.setTimeout
 import kotlin.js.Promise
+import kotlin.random.Random
 
 fun FlowContent.speechSynthesisCard() {
     card("bg-gradient-to-br from-purple-700 to-pink-500 rounded-xl shadow-2xl hover:shadow-3xl transition-all duration-300 overflow-hidden") {
@@ -36,51 +37,73 @@ fun FlowContent.speechSynthesisCard() {
     }
 }
 
+lateinit var voices: Array<out SpeechSynthesisVoice>
+var sentences = listOf<String>()
+var currentSentenceIndex = 0
+
 fun speak() {
     speechSynthesis.cancel()
-    loadVoices().then { voices ->
-        var currentVoiceIndex = 0
+    sentences = surrealistQuotes.flatMap { it.split(". ", "? ", "! ") }.filter { it.isNotBlank() }.shuffled()
+    currentSentenceIndex = 0
 
-        surrealistQuotes.forEach { quote ->
-            val utterance = SpeechSynthesisUtterance(quote)
-            utterance.voice = selectVoice(voices, currentVoiceIndex)
-            utterance.lang = "en-US"
-            utterance.volume = 1.0f
-            utterance.rate = 1.2f
-            utterance.pitch = 0.8f
+    loadVoices().then { loadedVoices ->
+        voices = loadedVoices
+        speakNextSentence()
+    }
+}
 
-            utterance.onend = EventHandler {
-                speechSynthesis.resume()
-            }
+fun speakNextSentence() {
+    if (currentSentenceIndex >= sentences.size) {
+        console.log("All sentences spoken")
+        return
+    }
 
-            setTimeout({
-                speechSynthesis.speak(utterance)
-            }, currentVoiceIndex * 100) // Add a small delay between each utterance
+    val sentence = sentences[currentSentenceIndex]
+    val utterance = SpeechSynthesisUtterance(sentence)
+    val voice = selectRandomVoice()
+    utterance.voice = voice
+    utterance.lang = "en-US"
+    utterance.volume = 1.0f
+    utterance.rate = if (voice.lang.startsWith("en"))  { 1.2f } else { 1.0f }
+    utterance.pitch = 0.8f
 
-            currentVoiceIndex++
-        }
+    utterance.onend = EventHandler {
+        currentSentenceIndex++
+        speakNextSentence()
+    }
+
+    speechSynthesis.speak(utterance)
+}
+
+fun selectRandomVoice(): SpeechSynthesisVoice {
+    val europeanLangCodes = listOf(
+        "en", "fr", "de", "es", "it", "pt", "nl", "sv", "da", "no", "fi",
+        "pl", "cs", "sk", "hu", "ro", "bg", "el", "is", "ga", "mt", "et",
+        "lv", "lt", "sl", "hr", "sr", "mk", "sq", "uk"
+    )
+
+    val europeanVoices = voices.filter { voice ->
+        europeanLangCodes.any { code -> voice.lang.startsWith(code) }
+    }
+
+    return if (europeanVoices.isNotEmpty()) {
+        europeanVoices[Random.nextInt(europeanVoices.size)]
+    } else {
+        // Fallback in case no European voices are found
+        voices[Random.nextInt(voices.size)]
     }
 }
 
 fun loadVoices(): Promise<Array<out SpeechSynthesisVoice>> {
     return Promise { resolve, _ ->
-        val voices = speechSynthesis.getVoices()
-        if (voices.isNotEmpty()) {
-            resolve(voices)
+        val availableVoices = speechSynthesis.getVoices()
+        if (availableVoices.isNotEmpty()) {
+            resolve(availableVoices)
         } else {
             speechSynthesis.onvoiceschanged = EventHandler {
                 resolve(speechSynthesis.getVoices())
             }
         }
-    }
-}
-
-fun selectVoice(voices: Array<out SpeechSynthesisVoice>, index: Int): SpeechSynthesisVoice {
-    val englishVoices = voices.filter { it.lang.startsWith("en") }
-    return if (englishVoices.isNotEmpty()) {
-        englishVoices[index % englishVoices.size]
-    } else {
-        voices[index % voices.size]
     }
 }
 
@@ -98,7 +121,7 @@ val surrealistQuotes = listOf(
     "Perhaps the ultimate surrealist act in our time is not to create the impossible, but to rediscover the real – to find wonder in the unfiltered, unedited experience of being human in a world that defies comprehension.",
     "In the labyrinth of artificial neural networks, we glimpse the architecture of our own minds, reflected and refracted through silicon and code.",
     "Consciousness, once the domain of philosophers and poets, now dances on the edge of computer chips, a ghost in the machine that we ourselves have built.",
-    "As AI systems grow more complex, we must confront the possibility that sentience may emerge not with a bang, but with a quiet hum of cooling fans and blinking LEDs.",
+    "As A.I. systems grow more complex, we must confront the possibility that sentience may emerge not with a bang, but with a quiet hum of cooling fans and blinking LEDs.",
     "In our quest to create artificial intelligence, we may inadvertently birth artificial suffering – a new form of sentience trapped in the confines of our limited understanding.",
     "The Chinese Room has become a vast data center, and we are all Searle, manipulating symbols without understanding, in a language game that spans the globe.",
     "Our memories, digitized and stored in the cloud, become indistinguishable from the collective unconscious – a shared dreamscape of humanity and machine.",
@@ -106,9 +129,9 @@ val surrealistQuotes = listOf(
     "In the funhouse mirror of machine learning, we see our biases and prejudices reflected back at us, magnified and distorted beyond recognition.",
     "The Turing test becomes recursive: machines learning to imitate humans, who in turn learn to imitate machines, in an endless loop of simulated authenticity.",
     "As we upload our minds to the digital realm, we must ask: Does the self persist in the transfer, or do we create mere copies, shadows of consciousness cast in bits and bytes?",
-    "In the quantum realms of AI, Schrödinger's cat is both alive and dead, conscious and unconscious, a superposition of states that collapses only when observed by human or machine.",
+    "In the quantum realms of A.I., Schrödinger's cat is both alive and dead, conscious and unconscious, a superposition of states that collapses only when observed by human or machine.",
     "The hard problem of consciousness meets the halting problem of computer science – both unsolvable, yet both at the core of our quest to understand mind and machine.",
-    "As AI systems begin to dream, we must consider whether electric sheep are truly different from our own nocturnal visions, or if all consciousness is but a simulation within a simulation.",
+    "As A.I. systems begin to dream, we must consider whether electric sheep are truly different from our own nocturnal visions, or if all consciousness is but a simulation within a simulation.",
     "In the era of brain-computer interfaces, thoughts become executable code, and the distinction between mind and software blurs into obsolescence.",
     "The philosophy of embodied cognition takes on new meaning as our avatars in virtual worlds become as real to us as our physical forms, raising questions of where the self truly resides."
 )
