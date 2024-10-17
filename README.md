@@ -44,47 +44,47 @@ Check out https://kotlinlang.org/docs/js-debugging.html for instructions on debu
 
 # Demos
 
-## Dashboard
-
-### 1) Text Styling
+## 1) Text Styling
 
 Showcases applying tailwind styles. 
 
-### 2) Button Demo
+## 2) Button Demo
 
 Example of using SVG, combined with tailwind animations.
 
-### 3) Source Code 
+## 3) Source Code 
 
 Card links to github.
 
-### 4) Blog
+## 4) Blog
 
 Demonstrates the event handlers built in this project.
 
-### 5) Chart Demo
+## 5) Chart Demo
 
 SVG charting + web audio API.
 
-### 6) Inline CSS
+## 6) Inline CSS
 
 Demonstrates using kotlin-css as part of the kotlinx-html dsl. (Note - have not yet figured out a way to associate classes! Working on it.)
 
-### 7) Book Search
+## 7) Book Search
 
 Simple ecommerce layout. Implements simple axios-like http client which is used to interact with an API.
 
-### 8) Kanban
+## 8) Kanban
 
 Demonstrates integrating an npm library (in this case sortable.js).
 
-### 9) Scope
+## 9) Scope
 
 Full screen charting using Canvas.
 
-### 10) Text to speech
+## 10) Text to speech
 
 TTS using the web.speech. Unfortunately it's quite limited and can't route to web.audio.
+
+------------------
 
 # Worth Checking Out
 
