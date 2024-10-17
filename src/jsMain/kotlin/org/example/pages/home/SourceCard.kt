@@ -5,9 +5,8 @@ import org.example.pages.home.components.card
 
 fun FlowContent.sourceCard() {
     card("relative overflow-hidden transform -rotate-2 hover:rotate-0 transition-transform duration-300") {
-        div("absolute inset-0 bg-gradient-to-r from-gray-800 to-black to-90% transform")
         div("absolute inset-0 flex flex-col") {
-            div("flex-1 bg-gray-800 flex items-center justify-center z-10") {
+            div("flex-1 bg-gray-800 flex items-center justify-center z-10 shadow-2xl") {
                 div("relative") {
                     for (i in 5 downTo 1) {
                         h2("text-3xl font-black uppercase tracking-wider absolute inset-0 flex items-center justify-center whitespace-nowrap") {
