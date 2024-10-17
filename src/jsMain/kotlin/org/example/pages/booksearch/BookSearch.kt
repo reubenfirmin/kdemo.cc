@@ -31,6 +31,9 @@ class BookSearch {
                 div("px-4 py-6 sm:px-0") {
                     div("mb-8") {
                         p("text-xl text-center text-gray-700") {
+                            +"(This demo may be broken, as open-library.org is down. Check the source anyway.)"
+                        }
+                        p("text-xl text-center text-gray-700") {
                             +"Discover your next favorite book!"
                         }
                         div("mt-4 flex justify-center") {
