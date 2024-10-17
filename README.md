@@ -99,8 +99,19 @@ Router.kt implements a very simple router. Any navigation is intercepted, and th
 
 ## Calling APIs
 
-The booksearch demo implements a simple HttpClient - just a wrapper around fetch with some convenience. BookApi demonstrates deserializing responses.
+The booksearch demo implements a simple `HttpClient` - just a wrapper around fetch with some convenience. `BookApi` demonstrates deserializing responses. It would be straightforward to wrap Axios or Ky though, if you wanted something prebuilt.
+
+## Wrapping JS Libraries
+
+Speaking of which, you can of course use js libraries. Check out how `Sortable` is bound; the kanban demo uses this. 
 
 ## CSS
 
-Demo #9 above demonstrates the inline css dsl.
+Demo #6 above demonstrates the inline css dsl.
+
+## Components
+
+You can just compose together functions to extend the dsl, as in, for example, the call to sliders() in `ChartCard`.
+
+However, you may prefer to make more reusable components. Check out the `Card` class to see a very simple component, and then
+check out the usages of the `card` function.
