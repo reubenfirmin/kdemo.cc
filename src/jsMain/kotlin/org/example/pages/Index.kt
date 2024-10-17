@@ -47,8 +47,11 @@ class Index {
                         +"Interactive Demos"
                     }
 
-                    div("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6") {
+                    p("mb-4") {
+                        +"These demos explore kotlin.js and browser features. See the source on github for context."
+                    }
 
+                    div("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6") {
                         textStyleCard()
                         svgMaskCard()
                         sourceCard()
