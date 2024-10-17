@@ -38,9 +38,11 @@ fun FlowContent.blogDemoCard() {
         ...
 ```
 
-## Debug in IDE
+## Debug code in your IDE
 
 Check out https://kotlinlang.org/docs/js-debugging.html for instructions on debugging in IntelliJ.
+
+------------------
 
 # Demos
 
