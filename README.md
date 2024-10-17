@@ -107,7 +107,7 @@ Speaking of which, you can of course use js libraries. Check out how `Sortable` 
 
 ## CSS
 
-Demo #6 above demonstrates the inline css dsl.
+Demo #6 above demonstrates the inline css dsl. Everything else uses tailwind classes.
 
 ## Components
 
