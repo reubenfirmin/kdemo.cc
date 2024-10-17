@@ -7,7 +7,6 @@ import web.events.EventHandler
 import web.speech.SpeechSynthesisUtterance
 import web.speech.SpeechSynthesisVoice
 import web.speech.speechSynthesis
-import web.timers.setTimeout
 import kotlin.js.Promise
 import kotlin.random.Random
 

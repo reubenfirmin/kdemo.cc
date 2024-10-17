@@ -29,14 +29,6 @@ fun FlowContent.styleCard() {
                 timing = Timing.linear,
                 iterationCount = IterationCount.infinite
             )
-            KeyframesBuilder().apply {
-                from {
-                    backgroundPosition = RelativePosition.top
-                }
-                to {
-                    backgroundPosition = RelativePosition.bottom
-                }
-            }.toString()
         }
         div {
             css {

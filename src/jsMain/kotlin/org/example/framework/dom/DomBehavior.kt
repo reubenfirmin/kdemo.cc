@@ -3,10 +3,7 @@ package org.example.framework.dom
 import js.objects.jso
 import web.dom.Element
 import web.dom.document
-import web.dom.observers.IntersectionObserver
-import web.dom.observers.MutationObserver
-import web.dom.observers.MutationObserverInit
-import web.dom.observers.MutationRecordType
+import web.dom.observers.*
 import web.events.EventHandler
 import web.window.window
 
@@ -71,11 +68,11 @@ object DomBehavior {
                     displayCallbacks.removeAll { it.first == id }
                 }
             }
-        }, jso {
-            root = null
-            rootMargin = "0px"
+        }, IntersectionObserverInit(
+            root = null,
+            rootMargin = "0px",
             threshold = arrayOf(0.0)
-        })
+        ))
 
         mutationObserver = MutationObserver { mutations, _ ->
             var shouldFlush = false
@@ -107,12 +104,12 @@ object DomBehavior {
             }
         }
 
-        mutationObserver.observe(document, jso<MutationObserverInit> {
-            childList = true
-            subtree = true
-            attributes = true
+        mutationObserver.observe(document, MutationObserverInit (
+            childList = true,
+            subtree = true,
+            attributes = true,
             attributeFilter = arrayOf("id")
-        })
+        ))
 
         flush()
     }

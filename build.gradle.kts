@@ -15,7 +15,7 @@ repositories {
     mavenCentral()
 }
 
-val kotlinWrappers = "1.0.0-pre.800"
+val kotlinWrappers = "1.0.0-pre.819"
 
 kotlin {
     js(IR) {
@@ -49,9 +49,7 @@ kotlin {
             dependencies {
                 implementation(project.dependencies.platform("org.jetbrains.kotlin-wrappers:kotlin-wrappers-bom:$kotlinWrappers"))
                 implementation("org.jetbrains.kotlin-wrappers:kotlin-js")
-                implementation("org.jetbrains.kotlin-wrappers:kotlin-browser") {
-                    exclude("org.jetbrains.kotlin-wrappers", "kotlin-cssom")
-                }
+                implementation("org.jetbrains.kotlin-wrappers:kotlin-browser")
                 implementation("org.jetbrains.kotlin-wrappers:kotlin-css")
 
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
