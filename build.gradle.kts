@@ -151,18 +151,15 @@ tasks {
         dependsOn("build")
 
         doLast {
-            // Debug: Print all tasks that were executed
             println("Executed tasks: ${gradle.taskGraph.allTasks.map { it.name }}")
 
-            // Ensure the dist directory exists and is empty
             delete("$rootDir/dist")
             mkdir("$rootDir/dist")
 
-            // Copy the production build output to the dist directory
             copy {
                 from("$buildDir/dist/js/productionExecutable")
                 into("$rootDir/dist")
-                include("**/*")  // This ensures all files and subdirectories are copied
+                include("**/*")
             }
 
             println("\nProduction build completed and copied to $rootDir/dist")

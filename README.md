@@ -66,21 +66,25 @@ Demonstrates the event handlers built in this project.
 
 SVG charting + web audio API.
 
-### 6) Book Search
+### 6) Inline CSS
+
+Demonstrates using kotlin-css as part of the kotlinx-html dsl. (Note - have not yet figured out a way to associate classes! Working on it.)
+
+### 7) Book Search
 
 Simple ecommerce layout. Implements simple axios-like http client which is used to interact with an API.
 
-### 7) Kanban
+### 8) Kanban
 
 Demonstrates integrating an npm library (in this case sortable.js).
 
-### 8) Scope
+### 9) Scope
 
 Full screen charting using Canvas.
 
-### 9) Inline CSS
+### 10) Text to speech
 
-Demonstrates using kotlin-css as part of the kotlinx-html dsl. (Note - have not yet figured out a way to associate classes! Working on it.)
+TTS using the web.speech. Unfortunately it's quite limited and can't route to web.audio.
 
 # Worth Checking Out
 
