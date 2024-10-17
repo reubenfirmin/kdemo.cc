@@ -22,7 +22,6 @@ class BlogIndex {
             }
 
             form("mt-6") {
-                id = "blog-form"
                 div("flex") {
                     input(classes = "flex-grow p-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500") {
                         id = "blog-form-input"
@@ -32,7 +31,6 @@ class BlogIndex {
                         placeholder = "What's on your mind?"
                     }
                     button(classes = "bg-blue-500 text-white px-4 py-2 rounded-r-md hover:bg-blue-600 transition duration-200") {
-                        id = "blog-post"
                         type = ButtonType.submit
                         +"Post"
                     }
@@ -51,14 +49,15 @@ class BlogIndex {
                             div("flex justify-between items-center mb-2") {
                                 span("text-sm text-gray-500") { +timestamp }
                                 button(classes = "text-red-500 hover:text-red-700") {
-                                    id = "delete-$timestamp"
                                     +"Delete"
                                     onClick { mouseEvent ->
                                         (mouseEvent.currentTarget as HTMLElement).closest("div.bg-white")?.remove()
                                     }
                                 }
                             }
-                            p("text-gray-800") { +newPost }
+                            p("text-gray-800") {
+                                +newPost
+                            }
                         }
                         inputEl.value = ""
                     }

@@ -1,6 +1,7 @@
-package org.example.pages.home
+package org.example.pages
 
 import kotlinx.html.*
+import org.example.pages.home.*
 import org.example.pages.home.svgmaskcard.animatedBackground
 import org.example.pages.home.svgmaskcard.svgMaskCard
 import org.example.pages.home.svgmaskcard.maskedBackgroundLayer
@@ -57,6 +58,7 @@ class Index {
                         kanbanDemoCard()
                         scopeDemoCard()
                         styleCard()
+                        speechSynthesisCard()
                     }
                 }
             }

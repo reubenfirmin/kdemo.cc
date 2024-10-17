@@ -4,7 +4,7 @@ import org.example.framework.Router
 import org.example.framework.route
 import org.example.pages.blog.BlogIndex
 import org.example.pages.booksearch.BookSearch
-import org.example.pages.home.Index
+import org.example.pages.Index
 import org.example.pages.kanban.Kanban
 import org.example.pages.oscilloscope.Oscilloscope
 
