@@ -27,10 +27,10 @@ class Index {
                         }
                         div("flex space-x-4") {
                             listOf(
-                                "Blog" to App.blog,
+                                "Blog" to App.blog.main,
                                 "Book Search" to App.books.search,
-                                "Scope" to App.scope,
-                                "Kanban" to App.kanban
+                                "Scope" to App.scope.main,
+                                "Kanban" to App.kanban.board
                             ).forEach { (name, route) ->
                                 a(
                                     href = route.path,
@@ -66,6 +66,12 @@ class Index {
                     }
                 }
             }
+        }
+    }
+
+    fun TagConsumer<*>.fish() {
+        h1 {
+            +"Fish!"
         }
     }
 

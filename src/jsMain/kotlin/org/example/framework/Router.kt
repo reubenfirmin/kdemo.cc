@@ -35,17 +35,21 @@ object Router {
                     is Promise<*> -> result.then { DomBehavior.flush() }
                     else -> DomBehavior.flush()
                 }
-            } ?: notFound()
+            } ?: notFound(path)
         }
 
         console.log("Navigating to ${window.location.pathname}")
     }
 
-    private fun notFound() {
+    private fun notFound(path: String) {
         document.body.apply {
             clear()
             appendTo().h1 {
                 +"Sorry, couldn't find what you are looking for"
+                console.log("Was looking for $path in:")
+                for (route in routes) {
+                    console.log(route.key)
+                }
             }
         }
         DomBehavior.flush()
@@ -60,37 +64,54 @@ object Router {
     }
 }
 
-open class Routes<T>(private val resource: T, private val basePath: String) {
-    /**
-     * ```
-     * with (MyClass()) {
-     *     route("{path}") { it.renderFunc() }
-     * }
-     * ```
-     */
-    fun route(path: String, block: T.(TagConsumer<*>) -> Unit) =
-        with (resource) {
-            Router.addRoute((basePath + path).replace("//", "/")) {
-                block(this@with, this)
-            }
-        }
-
-
-    /**
-     * ```
-     * route (MyClass()) {
-     *     "{path}" to { renderFunc() }
-     * }
-     * ```
-     */
+/**
+ * Type safe routing.
+ *
+ *     object myresource: Routes<MyResource>(MyResource(), "/resource") {
+ *         val main = route { "/view" to { someView() }}
+ *     }
+ *
+ * This gives you the ability elsewhere in the app to call:
+ *
+ *    myresource.main.path
+ *
+ */
+open class Routes<T : Any>(val resource: T, private val basePath: String) {
     fun route(block: T.() -> Pair<String, TagConsumer<*>.() -> Any>): Route {
         val (path, handler) = resource.block()
-        return Router.addRoute(path, handler)
+        return Router.addRoute((basePath + path).replace("//", "/"), handler)
     }
 }
-
-inline fun <reified T : Any> routes(resource: T, basePath: String, block: Routes<T>.() -> Unit) = Routes(resource, basePath).apply { block() }
 
 
 // TODO handle params and such
 data class Route(val path: String)
+
+
+/**
+ * Not typesafe, but lower boilerplate
+ * ```
+ * with (MyClass()) {
+ *     route("{path}") { it.renderFunc() }
+ * }
+ * ```
+ */
+inline fun <reified T : Any> T.route(path: String, crossinline block: T.(TagConsumer<*>) -> Unit) =
+    Router.addRoute(path) {
+        block(this@route, this)
+    }
+
+
+/**
+ * Not typesafe, but lower boilerplate
+ *
+ * ```
+ * route (MyClass()) {
+ *     "{path}" to { renderFunc() }
+ * }
+ * ```
+ */
+fun <T : Any> route(instance: T, block: T.() -> Pair<String, TagConsumer<*>.() -> Any>): Route {
+    val (path, handler) = instance.block()
+    return Router.addRoute(path, handler)
+}

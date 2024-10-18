@@ -1,6 +1,7 @@
 package org.example.pages.home
 
 import kotlinx.html.*
+import org.example.App
 import org.example.pages.home.components.card
 
 
@@ -16,7 +17,7 @@ fun FlowContent.scopeDemoCard() {
             }
 
             a(classes = "inline-block bg-gray-100 text-blue-600 font-semibold py-2 px-4 rounded-full hover:bg-blue-100 transition-colors duration-300 shadow-lg hover:text-blue-900") {
-                href = "/scope"
+                href = App.scope.main.path
                 +"View Demo"
             }
         }

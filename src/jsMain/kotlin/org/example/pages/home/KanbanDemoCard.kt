@@ -1,6 +1,7 @@
 package org.example.pages.home
 
 import kotlinx.html.*
+import org.example.App
 import org.example.pages.home.components.card
 
 fun FlowContent.kanbanDemoCard() {
@@ -17,7 +18,7 @@ fun FlowContent.kanbanDemoCard() {
                 }
 
                 a(classes = "inline-block bg-neon-green text-gray-900 font-bold py-2 px-6 rounded transition-all duration-300 hover:bg-neon-blue hover:text-gray-900 neon-green-glow shadow-black") {
-                    href = "/kanban"
+                    href = App.kanban.board.path
                     +"View Demo"
                 }
             }
