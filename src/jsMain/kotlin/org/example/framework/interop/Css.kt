@@ -5,6 +5,7 @@ import kotlinx.html.CommonAttributeGroupFacade
 import kotlinx.html.classes
 import kotlinx.html.style
 import web.dom.document
+import web.html.HTMLElement
 import web.html.HTMLStyleElement
 
 /**
@@ -14,6 +15,23 @@ import web.html.HTMLStyleElement
 fun CommonAttributeGroupFacade.css(block: CssBuilder.() -> Unit) {
     style = CssBuilder().apply(block).toString().removeSuffix("\n")
 }
+
+/**
+ * Allow setting inline styles on dom elements. See above note about inline style performance (being great).
+ */
+fun HTMLElement.css(block: CssBuilder.() -> Unit) {
+    val style = CssBuilder().apply(block)
+    this.setAttribute("style", style.toString().removeSuffix("\n"))
+}
+
+/**
+ * Allows easy setting of tailwind styles on dom elements; e.g.
+ * document.body.classes("bg-[#1a2b3c]")
+ */
+fun HTMLElement.classes(classes: String) {
+    this.className = classes.trim().split(Regex("\\s+")).distinct().joinToString(" ")
+}
+
 
 var counter = 0
 

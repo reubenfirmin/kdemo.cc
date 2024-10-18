@@ -1,6 +1,7 @@
 package org.example.pages
 
 import kotlinx.html.*
+import org.example.App
 import org.example.pages.home.*
 import org.example.pages.home.svgmaskcard.animatedBackground
 import org.example.pages.home.svgmaskcard.svgMaskCard
@@ -26,13 +27,13 @@ class Index {
                         }
                         div("flex space-x-4") {
                             listOf(
-                                "Blog" to "/blog",
-                                "Book Search" to "/book-search",
-                                "Scope" to "/scope",
-                                "Kanban" to "/kanban"
-                            ).forEach { (name, path) ->
+                                "Blog" to App.blog,
+                                "Book Search" to App.books.search,
+                                "Scope" to App.scope,
+                                "Kanban" to App.kanban
+                            ).forEach { (name, route) ->
                                 a(
-                                    href = path,
+                                    href = route.path,
                                     classes = "text-gray-300 hover:text-white transition duration-150 ease-in-out"
                                 ) {
                                     +name

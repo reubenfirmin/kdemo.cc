@@ -10,11 +10,12 @@ import kotlin.js.Promise
 
 // TODO this is primitive. doesn't allow for templated paths or parameters yet.
 object Router {
+
     private val routes = mutableMapOf<String, TagConsumer<*>.() -> Any>()
 
-    fun addRoute(path: String, handler: TagConsumer<*>.() -> Any): Router {
+    fun addRoute(path: String, handler: TagConsumer<*>.() -> Any): Route {
         routes[path] = handler
-        return this
+        return Route(path)
     }
 
     fun navigate(path: String) {
@@ -59,27 +60,37 @@ object Router {
     }
 }
 
-/**
- * ```
- * with (MyClass()) {
- *     route("{path}") { it.renderFunc() }
- * }
- * ```
- */
-inline fun <reified T : Any> T.route(path: String, crossinline block: T.(TagConsumer<*>) -> Unit) {
-    Router.addRoute(path) {
-        block(this@route, this)
+open class Routes<T>(private val resource: T, private val basePath: String) {
+    /**
+     * ```
+     * with (MyClass()) {
+     *     route("{path}") { it.renderFunc() }
+     * }
+     * ```
+     */
+    fun route(path: String, block: T.(TagConsumer<*>) -> Unit) =
+        with (resource) {
+            Router.addRoute((basePath + path).replace("//", "/")) {
+                block(this@with, this)
+            }
+        }
+
+
+    /**
+     * ```
+     * route (MyClass()) {
+     *     "{path}" to { renderFunc() }
+     * }
+     * ```
+     */
+    fun route(block: T.() -> Pair<String, TagConsumer<*>.() -> Any>): Route {
+        val (path, handler) = resource.block()
+        return Router.addRoute(path, handler)
     }
 }
 
-/**
- * ```
- * route (MyClass()) {
- *     "{path}" to { renderFunc() }
- * }
- * ```
- */
-fun <T : Any> route(instance: T, block: T.() -> Pair<String, TagConsumer<*>.() -> Any>) {
-    val (path, handler) = instance.block()
-    Router.addRoute(path, handler)
-}
+inline fun <reified T : Any> routes(resource: T, basePath: String, block: Routes<T>.() -> Unit) = Routes(resource, basePath).apply { block() }
+
+
+// TODO handle params and such
+data class Route(val path: String)
