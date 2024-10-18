@@ -12,9 +12,7 @@ import web.html.HTMLStyleElement
  * (kotlin-css does not support classname based styles; kotlin-styled-next is required for that.)
  */
 fun CommonAttributeGroupFacade.css(block: CssBuilder.() -> Unit) {
-    style = CssBuilder().apply {
-        block()
-    }.toString().removeSuffix("\n")
+    style = CssBuilder().apply(block).toString().removeSuffix("\n")
 }
 
 var counter = 0
