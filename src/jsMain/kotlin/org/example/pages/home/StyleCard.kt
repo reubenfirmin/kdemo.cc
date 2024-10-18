@@ -6,6 +6,7 @@ import kotlinx.html.FlowContent
 import kotlinx.html.div
 import kotlinx.html.p
 import org.example.framework.interop.css
+import org.example.framework.interop.cssClass
 
 fun FlowContent.styleCard() {
     div("w-full") {
@@ -29,6 +30,7 @@ fun FlowContent.styleCard() {
                 timing = Timing.linear,
                 iterationCount = IterationCount.infinite
             )
+            position = Position.relative
         }
         div {
             css {
@@ -57,6 +59,23 @@ fun FlowContent.styleCard() {
                 p {
                     +"affecting none."
                 }
+            }
+        }
+
+        // this is an example of css class support
+        div {
+            cssClass {
+                position = Position.absolute
+                bottom = 16.px
+                right = 16.px
+                width = 12.px
+                height = 12.px
+                backgroundColor = Color.cyan
+                borderRadius = 50.pct
+                border = Border(width = 1.px, color = Color.cyan, style = BorderStyle.solid)
+                overflow = Overflow.hidden
+                display = Display.inlineBlock
+                fontSize = 0.px
             }
         }
     }

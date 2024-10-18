@@ -51,7 +51,7 @@ kotlin {
                 implementation("org.jetbrains.kotlin-wrappers:kotlin-js")
                 implementation("org.jetbrains.kotlin-wrappers:kotlin-browser")
                 implementation("org.jetbrains.kotlin-wrappers:kotlin-css")
-
+//                implementation("org.jetbrains.kotlin-wrappers:kotlin-emotion")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
                 implementation("org.jetbrains.kotlinx:kotlinx-html-js:0.11.0")
                 implementation(npm("tailwindcss", "3.4.4"))
