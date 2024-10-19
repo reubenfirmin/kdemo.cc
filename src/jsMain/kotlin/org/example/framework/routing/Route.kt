@@ -1,6 +1,7 @@
 package org.example.framework.routing
 
 import kotlinx.html.TagConsumer
+import web.media.source.AppendMode.Companion.segments
 
 sealed class RouteSegment {
     data class Static(val value: String) : RouteSegment()
@@ -10,8 +11,21 @@ sealed class RouteSegment {
 class Route(
     val pattern: String,
     val segments: List<RouteSegment>,
-    val handler: TagConsumer<*>.(Params) -> Any
-)
+    val handler: TagConsumer<*>.(Params) -> Any) {
+
+    fun path(vararg params: String): String {
+        val paramSegments = segments.filterIsInstance<RouteSegment.Parameter>()
+
+        require(params.size == paramSegments.size) { "Expected ${paramSegments.size} parameters, but got ${params.size}." }
+        var paramIdx = 0
+        return segments.joinToString("/", prefix = "/") { segment ->
+            when (segment) {
+                is RouteSegment.Static -> segment.value
+                is RouteSegment.Parameter -> params[paramIdx++]
+            }
+        }
+    }
+}
 
 /**
  * Not typesafe, but lower boilerplate than the Routes approach

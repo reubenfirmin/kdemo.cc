@@ -20,7 +20,7 @@ fun FlowContent.bookSearchCard() {
 
         div("flex justify-between px-6 pb-4") {
             a(classes = "inline-block bg-blue-600 text-white font-semibold py-2 px-6 rounded hover:bg-blue-700 transition-colors duration-300 shadow") {
-                href = App.books.search.pattern
+                href = App.books.search.path()
                 +"Explore"
             }
             span("text-xs text-gray-400 italic") {

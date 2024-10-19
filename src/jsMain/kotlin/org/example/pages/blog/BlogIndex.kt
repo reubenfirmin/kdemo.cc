@@ -1,6 +1,7 @@
 package org.example.pages.blog
 
 import kotlinx.html.*
+import org.example.App
 import org.example.framework.dom.onSubmit
 import org.example.framework.interop.appendTo
 import web.dom.document
@@ -74,6 +75,13 @@ class BlogIndex {
     fun TagConsumer<*>.blogPost(month: String, day: String, year: String) {
         h1 {
             +"$month $day $year"
+        }
+        a {
+            // just a silly demo, not worth complicating with date logic :)
+            href = App.blog.date.path((month.toInt() + 1).toString(), day, year)
+            // this would throw an exception, because we didn't supply the needed params
+            //href = App.blog.date.path()
+            +"Next"
         }
     }
 

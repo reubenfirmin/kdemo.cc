@@ -18,7 +18,7 @@ fun FlowContent.kanbanDemoCard() {
                 }
 
                 a(classes = "inline-block bg-neon-green text-gray-900 font-bold py-2 px-6 rounded transition-all duration-300 hover:bg-neon-blue hover:text-gray-900 neon-green-glow shadow-black") {
-                    href = App.kanban.board.pattern
+                    href = App.kanban.board.path()
                     +"View Demo"
                 }
             }
