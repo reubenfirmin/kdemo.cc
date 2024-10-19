@@ -45,6 +45,11 @@ object Router {
         DomBehavior.flush()
     }
 
+    fun navigate(path: String) {
+        window.history.pushState(null, "", path)
+        handleRoute()
+    }
+
     fun start() {
         window.onpopstate = {
             handleRoute()

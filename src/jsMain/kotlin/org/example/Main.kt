@@ -18,7 +18,7 @@ class App {
     // a) the "<Index>(Index()" - this is just redundant. (b is 20+ lines down)
     object index: Routes<Index>(Index(), "/") {
         val home = route { "" to { home() }}
-        // this is an easter egg. (just to demo that you can have multiple routes per path)
+        // easter egg (demo that you can have multiple routes per path)
         val fish = route { "/fish" to { fish() }}
     }
 
@@ -28,7 +28,10 @@ class App {
 
     object blog: Routes<BlogIndex>(BlogIndex(), "/blog") {
         val main = route { "/posts" to { blogIndex() }}
-        val date = route { "/post/{month}/{date}/{year}" to { params -> blogPost(params["month"]!!, params["date"]!!, params["year"]!!) }}
+        // easter egg (demo of route with params)
+        val postOnDate = route { "/post/{month}/{date}/{year}" to {
+            params -> blogPost(params["month"]!!, params["date"]!!, params["year"]!!) }
+        }
     }
 
     object scope: Routes<Oscilloscope>(Oscilloscope(), "/scope") {

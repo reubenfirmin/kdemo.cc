@@ -76,9 +76,9 @@ class BlogIndex {
         h1 {
             +"$month $day $year"
         }
-        a {
-            // just a silly demo, not worth complicating with date logic :)
-            href = App.blog.date.path((month.toInt() + 1).toString(), day, year)
+        a(classes = "underline pointer") {
+            //  demo, not worth complicating with actual date logic :)
+            href = App.blog.postOnDate.path((month.toInt() + 1).toString(), day, year)
             // this would throw an exception, because we didn't supply the needed params
             //href = App.blog.date.path()
             +"Next"

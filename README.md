@@ -97,7 +97,10 @@ calling any of these functions queues up an event handler to be added as soon as
 
 ## Routing
 
-Router.kt implements a very simple router. Any navigation is intercepted, and the body is swapped out with the new "page". Main.kt wires this up for this app.
+Router.kt implements a usable router. Any navigation is intercepted, and the document body is swapped out with the new "page". Main.kt wires this up for this app. (NOTE - if you wanted to extend this, you could feasibly take an HTMX like approach and target specific locations in the dom for swap. This would be done inside Router.handleRoute -- instead of document.body, find the appropriate node.)
+
+Note that routes can optionally be handled in a type safe way, allowing links to be constructed without magic strings. See demos of this
+in `BlogDemoCard` and `BlogIndex`.
 
 ## Calling APIs
 
