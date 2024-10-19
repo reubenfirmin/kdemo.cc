@@ -33,7 +33,7 @@ class Index {
                                 "Kanban" to App.kanban.board
                             ).forEach { (name, route) ->
                                 a(
-                                    href = route.path,
+                                    href = route.pattern,
                                     classes = "text-gray-300 hover:text-white transition duration-150 ease-in-out"
                                 ) {
                                     +name
@@ -74,5 +74,4 @@ class Index {
             +"Fish!"
         }
     }
-
 }

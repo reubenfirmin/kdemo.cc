@@ -1,7 +1,7 @@
 package org.example
 
-import org.example.framework.Router
-import org.example.framework.Routes
+import org.example.framework.routing.Router
+import org.example.framework.routing.Routes
 import org.example.pages.Index
 import org.example.pages.blog.BlogIndex
 import org.example.pages.booksearch.BookSearch
@@ -28,6 +28,7 @@ class App {
 
     object blog: Routes<BlogIndex>(BlogIndex(), "/blog") {
         val main = route { "/posts" to { blogIndex() }}
+        val date = route { "/post/{month}/{date}/{year}" to { params -> blogPost(params["month"]!!, params["date"]!!, params["year"]!!) }}
     }
 
     object scope: Routes<Oscilloscope>(Oscilloscope(), "/scope") {

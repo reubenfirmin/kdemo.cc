@@ -17,7 +17,7 @@ fun FlowContent.scopeDemoCard() {
             }
 
             a(classes = "inline-block bg-gray-100 text-blue-600 font-semibold py-2 px-4 rounded-full hover:bg-blue-100 transition-colors duration-300 shadow-lg hover:text-blue-900") {
-                href = App.scope.main.path
+                href = App.scope.main.pattern
                 +"View Demo"
             }
         }

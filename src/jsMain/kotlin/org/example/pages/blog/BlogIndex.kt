@@ -71,6 +71,12 @@ class BlogIndex {
         }
     }
 
+    fun TagConsumer<*>.blogPost(month: String, day: String, year: String) {
+        h1 {
+            +"$month $day $year"
+        }
+    }
+
     private fun getCurrentTimestamp(): String {
         val now = Date()
         return "${now.toLocaleDateString()} ${now.toLocaleTimeString()}"
