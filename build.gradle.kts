@@ -63,8 +63,8 @@ kotlin {
 
 val buildStyle: TaskProvider<NpxTask> = tasks.register<NpxTask>("buildStyle") {
     println("Running tailwind")
-    command.set("tailwindcss")
-    args.set(listOf("-i", "src/jsMain/resources/template.css", "-o", "src/jsMain/resources/style.css"))
+    command.set("${project.buildDir}/js/node_modules/.bin/tailwindcss")
+    args.set(listOf("-i", "src/jsMain/resources/template.css", "-o", "src/jsMain/resources/style.css", "--verbose"))
     inputs.files(fileTree("src/jsMain/kotlin"))
     inputs.file("src/jsMain/resources/template.css")
     outputs.file("src/jsMain/resources/style.css")
